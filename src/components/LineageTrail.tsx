@@ -61,7 +61,10 @@ export const LineageTrail: WorldObjectComponent = ({
               top: g.y * sy,
               width: g.w * sx,
               height: g.h * sy,
-              opacity: p * (0.16 + i * 0.06),
+              // Faint. They are stand-ins for states we do not have exports
+              // of, so they must read as "there were earlier ones" and never
+              // as a drawing you could look at.
+              opacity: p * (0.07 + i * 0.03),
               border: `${STROKE.hair}px solid ${palette.line}`,
               borderRadius: RADIUS.card,
               background: palette.card,
@@ -78,7 +81,13 @@ export const LineageTrail: WorldObjectComponent = ({
           top: fixed.y * sy,
           width: fixed.w * sx,
           height: fixed.h * sy,
-          background: palette.card,
+          // The DRAWING's own paper colour, not palette.card. A sheet of
+          // paper is white whatever time of day the film has reached, and
+          // palette.card at the dusk stop rendered this as a dark box with a
+          // dark plan inside it — invisible, and it is the payoff of the whole
+          // two-cluster structure. PlanSheet takes `doc.paper` for the same
+          // reason.
+          background: plan?.paper ?? "#FFFDFA",
           borderRadius: RADIUS.card,
           border: `${STROKE.hair}px solid ${palette.line}`,
           overflow: "hidden",

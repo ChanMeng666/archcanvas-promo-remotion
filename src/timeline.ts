@@ -179,8 +179,17 @@ export const objectOpacityAtFrame = (
   frame: number
 ): number => {
   let o = 1;
-  if (obj.fadeInAt) o *= ramp(holdProgress(obj.fadeInAt as StationId, frame), 0.1, 0.8, 0, 1);
-  if (obj.fadeOutAt) o *= ramp(holdProgress(obj.fadeOutAt as StationId, frame), 0.1, 0.8, 1, 0);
+  // Fast in, fast out, and both well inside the station's hold.
+  //
+  // These used to run 0.1 -> 0.8, which spends seventy per cent of a beat
+  // fading. At frame 1450 the lineage card was still only 41% opaque more than
+  // half way through its own station, and read as washed-out type rather than
+  // as type arriving. A promo cannot afford that: an element should be present
+  // or gone, and the transition between should be the shortest thing that does
+  // not read as a cut. This film has no cuts, so "shortest" is about a third of
+  // a second at these station lengths.
+  if (obj.fadeInAt) o *= ramp(holdProgress(obj.fadeInAt as StationId, frame), 0.04, 0.28, 0, 1);
+  if (obj.fadeOutAt) o *= ramp(holdProgress(obj.fadeOutAt as StationId, frame), 0.7, 0.94, 1, 0);
   return o;
 };
 

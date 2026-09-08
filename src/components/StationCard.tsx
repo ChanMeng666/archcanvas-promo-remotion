@@ -90,8 +90,12 @@ export const StationCard: WorldObjectComponent = ({
   const surface = worldObject(id).surface ?? "ground";
   const tone =
     surface === "sheet" ? INK.day : surface === "photo" ? "#FFFFFF" : palette.ink;
-  const toneMuted =
-    surface === "sheet" ? INK.dayMuted : surface === "photo" ? "rgba(255,255,255,0.86)" : palette.inkMuted;
+
+  // Every line takes the SAME tone. tokens.ts states the rule and the first cut
+  // of this component broke it: "a muted line is smaller or lighter, never
+  // paler." Setting the second line in `inkMuted` measured 3.69:1 against the
+  // dusk ground at stop 2 — under AA, and visibly washed out in the lineage
+  // still. Emphasis comes from weight here, which costs no contrast at all.
 
   return (
     <div
@@ -124,7 +128,7 @@ export const StationCard: WorldObjectComponent = ({
         >
           <Sans
             size={size}
-            tone={i === 0 ? tone : toneMuted}
+            tone={tone}
             weight={i === 0 ? WEIGHT.medium : WEIGHT.regular}
           >
             {line}

@@ -116,7 +116,12 @@ export const STATIONS: readonly Station[] = [
     holdSec: 9.0,
     leadInSec: 2.2,
     tailSec: 0.8,
-    groundStop: 2,
+    // 1.5, not 2. At stop 2 the dusk ground measures 3.69:1 against the muted
+    // ink and 7.45:1 against the primary — and this station carries a card, so
+    // it must sit on the dark side of the ramp rather than in the middle of it.
+    // The band crossing belongs to `wall`, which is the one beat with no type
+    // on it. See CONTRAST_PAIRS in tokens.ts.
+    groundStop: 1.5,
     intent: "Pull back onto a second drawing's earlier versions, with product screen recordings as world-space cards.",
   },
   {
