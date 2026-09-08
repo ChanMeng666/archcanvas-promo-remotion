@@ -594,10 +594,43 @@ if (fs.existsSync(SFX_MANIFEST)) {
   }
 }
 
+// The plan-wall montage, composited from the sixty tiles by
+// scripts/build-wall-montage.mjs. It is DERIVED, not generated in the
+// irreplaceable sense — `node scripts/build-wall-montage.mjs` reproduces it
+// byte-for-byte from files that are themselves synced — so its absence is a
+// warning with the command to fix it, not the hard failure a lost audio cue is.
+const MONTAGE_REL = "wall-montage.png";
+const montageAbs = path.join(PUBLIC_DIR, MONTAGE_REL);
+if (fs.existsSync(montageAbs)) {
+  const m = measureRaster(montageAbs);
+  const bytes = fs.statSync(montageAbs).size;
+  stats.skipped += 1;
+  stats.bytes += bytes;
+  generatedRows.push({
+    id: "wall-montage",
+    src: MONTAGE_REL,
+    role: "montage",
+    provenance: "derived",
+    from: null,
+    bytes,
+    sha256: sha256(montageAbs),
+    width: m.width,
+    height: m.height,
+    durationSec: null,
+    fps: null,
+    resolutionBound: true,
+    note: "The 60 bench rasters composited into one image at the positions world.ts packs them into. Rebuild with `node scripts/build-wall-montage.mjs`.",
+  });
+} else {
+  warnings.push(
+    `public/${MONTAGE_REL} is missing — the wall station will render a blank region. Run \`node scripts/build-wall-montage.mjs\`.`
+  );
+}
+
 assets.push(...generatedRows);
 groupSummaries.push({
   label: "generated",
-  dest: "public/audio/",
+  dest: "public/audio/ + public/",
   n: generatedRows.length,
   copied: stats.copied - generatedBefore.copied,
   skipped: stats.skipped - generatedBefore.skipped,
