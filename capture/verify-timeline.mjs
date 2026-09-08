@@ -313,8 +313,18 @@ for (const d of layout.DELIVERABLES) {
       // FADE_INVISIBLE_PX in world.ts for why this is measured in pixels
       // rather than argued from "it happens off-frame" — that argument is
       // true in 16:9 and false in 9:16, which is the worst kind of true.
+      //
+      // TEXT IS EXEMPT, and this is a scope correction rather than a loophole.
+      // The rule exists so a photograph or a drawing never visibly dissolves
+      // into the ground — that reads as a rendering bug, because a physical
+      // thing does not do it. A line of type is not a physical thing: arriving
+      // and leaving IS how type behaves, in this film and in every other one,
+      // and a card that is forbidden to fade can only be forbidden to appear.
+      // Objects that carry a `surface` are the cards; everything else is still
+      // held to the original rule.
+      const isText = Boolean(obj.surface);
       const o = timeline.objectOpacityAtFrame(obj, frame);
-      if (o > 0.001 && o < 0.999) {
+      if (!isText && o > 0.001 && o < 0.999) {
         const fkey = `${d.id} ${obj.id}`;
         if (!widestWhileFading[fkey] || shown > widestWhileFading[fkey].px) {
           widestWhileFading[fkey] = { px: shown, frame };

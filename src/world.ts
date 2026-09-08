@@ -162,7 +162,7 @@ export const NATIVE_RASTER = {
    * upscale bound, and it is why the wall is laid out on fixed COLUMNS rather
    * than on a grid of equal cells.
    */
-  wallTile: { w: 1536, h: 1086 },
+  wallTile: { w: 640, h: 452 },
   /**
    * The product screen recordings — the ledger's role "clip". Wider than a
    * rendering, which is the sort of thing a hand-written "the biggest asset is
@@ -584,8 +584,24 @@ const BASE_OBJECTS: readonly WorldObject[] = [
     station: "wall",
     raster: "wallTile",
     rasterWorldW: WALL.colW,
-    fadeOutAt: null,
-    // Faded up during `lineage`, one station before it is seen.
+    // Faded out during `sentence`, AFTER the camera has flown up through it.
+    //
+    // The fly-through happens in that station's lead-in; the fade runs across
+    // its hold, by which point the wall is off-frame below the origin. Leaving
+    // it mounted was not free: at the final station's magnification the grid is
+    // 17,800 world units at 1.25x, so Chrome was asked to rasterise something
+    // like 22,000 CSS pixels of tiles that nothing can see, and a still render
+    // died on a delayRender timeout at frame 2150 having rendered fine at 1700.
+    fadeOutAt: "sentence",
+    // Faded up during `note`, TWO stations before it is seen, and the extra
+    // station is not caution — it is the tall formats.
+    //
+    // At `lineage` the 9:16 viewport is 11,360 world units tall, which reaches
+    // the top of the wall while it is still fading, so the audience watched
+    // 2,765px of plan grid dissolve into view. At `note` the same viewport is
+    // 3,024 units and the wall is 4,700 units below the bottom of it, in every
+    // format. The landscape master never showed this: it is exactly the class
+    // of bug the four-format gate exists to catch.
     //
     // It used to have no bounds at all, which meant sixty tiles were mounted on
     // EVERY frame of the film -- about 200 megapixels of decode held from frame
@@ -593,7 +609,7 @@ const BASE_OBJECTS: readonly WorldObject[] = [
     // A still render died on a delayRender timeout because of it. The wall must
     // exist before station 7 flies the camera up through it; it does not have
     // to exist before the camera has ever looked down.
-    fadeInAt: "lineage",
+    fadeInAt: "note",
     note: "60 plan rasters. Directly below the origin so station 7's push-in flies up THROUGH it.",
   },
   {
