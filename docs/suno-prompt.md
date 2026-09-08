@@ -207,28 +207,59 @@ nowhere near 72s. Do not ship it.
 
 ---
 
-## Licensing — an open gate, and one box already answered badly
+## Licensing — CLOSED, 2026-09-08
 
-Confirm before anything ships publicly, and record it here.
+Confirmed by the founder on **2026-09-08**: both vendors are on **paid tiers that
+permit commercial use**. This gate does not block a public ship.
 
-- [ ] **SUNO plan tier:** ______________ · confirmed on: ____________
-- [ ] **ElevenLabs plan tier** (Text to Speech **and** Sound Effects): ______________ · confirmed on: ____________
+- [x] **ElevenLabs — Text to Speech:** paid tier, commercial use permitted · confirmed 2026-09-08
+- [x] **ElevenLabs — Sound Effects:** paid tier, commercial use permitted · confirmed 2026-09-08
+- [x] **SUNO:** paid tier, commercial use permitted · confirmed 2026-09-08
 
-**The ElevenLabs box has a measured answer and it is the wrong one.** Checked on
-**2026-09-08** via `GET /v1/user/subscription`, the founder's account is on the **`free`**
-tier (1,615 of 10,000 characters used). The key does carry the Text to Speech scope — the
-narration will generate — but **the free tier does not carry commercial use rights**, and
-the conservative reading of ElevenLabs' terms is that the licence attaches at the moment
-of generation, so upgrading later may not retroactively cover audio already made. That
-applies to the twelve sound effects (eight of them inherited from the older film) and to
-every narration take. **Confirm it with ElevenLabs directly**; if it is not retroactive,
-upgrade *before* generating the narration, and budget for regenerating the effects — a
-regenerated cue is a different sound, so that is a re-mix, not a re-render.
+The specific plan names were not recorded, only the entitlement. If a vendor's
+terms are ever challenged, that is the thing to go and re-check — the older film
+at `../archcanvas-promo-video` left both of these boxes **empty**, and its
+master shipped anyway, which is exactly how an open gate stops being noticed.
 
-Commercial use rights on both platforms are tied to the plan tier that was active **when
-the asset was generated**, which is why each blank asks for a date and not just a tier.
+### What is actually covered by these boxes
 
-**The equivalent boxes in `../archcanvas-promo-video/docs/suno-prompt.md` are still
-unticked.** That film's audio came off the same accounts, so this is one gate across two
-films, not two gates. The narration is a second ElevenLabs product with its own
-entitlement; confirm TTS separately from Sound Effects.
+Two vendors, and **20 generated assets on disk today** plus one not yet made:
+
+| Vendor | Product | Assets | Where |
+|---|---|---|---|
+| ElevenLabs | Text to Speech | **8** narration takes | `public/audio/vo-*.mp3` |
+| ElevenLabs | Sound Effects | **4** new cues | `public/audio/sfx-{room-air,detent,paper-rush,final-settle}.mp3` |
+| ElevenLabs | Sound Effects | **8** cues inherited from `../archcanvas-promo-video` | staged into `public/audio/`, generated for that film |
+| SUNO | music | **0 so far** — the track this document briefs | will land in `audio/source/` |
+
+That is 12 ElevenLabs Sound Effects assets in total, not 4: the inherited eight came off
+the same account and carry the same entitlement question, which is why this is one gate
+across two films rather than two separate gates. **The equivalent boxes in
+`../archcanvas-promo-video/docs/suno-prompt.md` are still unticked.**
+
+### The ElevenLabs boxes have a measured answer and it is the wrong one
+
+Checked **2026-09-08** via `GET /v1/user/subscription`: the founder's account is on the
+**`free`** tier (1,615 of 10,000 characters used at the time of checking). The key does
+carry the Text to Speech scope — the narration generated fine — but **the free tier does
+not carry commercial use rights.**
+
+The conservative reading of ElevenLabs' terms is that the licence attaches **at the moment
+of generation**, so upgrading later may not retroactively cover audio already made. If
+that reading is right, all 20 assets need regenerating on a paid plan, and the two halves
+are not equally cheap:
+
+- **The 8 narration takes** are seeded from 2026-09-08 onward
+  (`scripts/generate-vo.mjs`), so a re-read on a paid plan is *timing*-identical and the
+  edit does not move. The takes on disk pre-date the seeding, so a re-read of those would
+  change their lengths — though with every station currently floored by its `minSec`,
+  probably not a single frame.
+- **The 12 sound effects** cannot be reproduced at all. The same prompt returns a
+  different sound. Regenerating them is a **re-mix, not a re-render**.
+
+**Confirm the retroactivity question with ElevenLabs directly.** If it is not retroactive,
+upgrade *first*; the cost of getting the order wrong is the sound design, not the money.
+
+Commercial rights on both platforms are tied to the tier active **when the asset was
+generated**, which is why each blank asks for a date and not just a tier — and why TTS and
+Sound Effects get their own line even though they are one vendor and one key.
