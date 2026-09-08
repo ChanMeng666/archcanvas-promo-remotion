@@ -1,0 +1,1031 @@
+{
+  "$comment": "WRITTEN BY scripts/sync-assets.mjs — NEVER HAND-EDIT.\n\nThis is the film's ledger: the record of exactly which bytes it was cut from. Every row\nnames a file staged into public/ (gitignored, regenerable) out of the first film's repo,\nwith its size, sha256 and machine-measured native dimensions. public/ is not tracked;\nthis file is, so a diff here is the reviewable record of a change in the raw material.\n\nNothing on screen is mocked up (CLAUDE.md law 2). If a drawing, rendering or clip is not\nin this ledger, it did not come out of the product and it does not belong in the film.\n\nRegenerate with `npm run sync:assets`. Verify with `npm run verify:assets` — Remotion\nfails SOFTLY on a missing staticFile(), so an unverified render can ship with a hole in it.\n\nShape: `assets` are individual files under public/<src>. `wall` groups 60 montage tiles\nunder public/wall/<files[].name> (same guarantees, compact form). `sources` are raw inputs\nstaged OUTSIDE public/, relative to the repo root — they are not loadable with staticFile().",
+  "generatedBy": "scripts/sync-assets.mjs",
+  "sourceRepo": "D:/github_repository/archcanvas-promo-video",
+  "maxUpscale": {
+    "$comment": "The camera's hard ceiling, computed from the staged bytes — never guessed. A raster shown wider than its native pixel width is being upscaled, and past roughly 1.5x it visibly softens on a 1920px master. ANY COMPOSITION THAT ASKS FOR MORE THAN ~1.5x ON A RASTER IS A DESIGN ERROR: bound the zoom, or reach for an SVG instead. Plans and brand marks are SVG, are resolution-independent and have no ceiling at all — every row carries resolutionBound saying which it is. Read maxSafeDisplayWidth per raster; tightestRaster is the one the pull-back runs out of pixels on first.",
+    "safeFactor": 1.5,
+    "targetCompositionWidth": 1920,
+    "tightestRaster": {
+      "id": "render-family-house-aerial",
+      "nativeWidth": 1536,
+      "nativeHeight": 1024,
+      "maxSafeDisplayWidth": 2304
+    },
+    "worked": {
+      "example": "render-family-house-aerial is 1536x1024; shown 1920px wide that is",
+      "upscale": 1.25,
+      "verdict": "inside the ceiling"
+    },
+    "perRaster": [
+      {
+        "id": "c05-fit",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c06-review-pins",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c07-edit-type",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c08-morph",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c10-select-room",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c11-shrink-result",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c13-timeline",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "c15-render-full",
+        "role": "clip",
+        "nativeWidth": 1786,
+        "nativeHeight": 944,
+        "upscaleAtTargetWidth": 1.08,
+        "maxSafeDisplayWidth": 2679
+      },
+      {
+        "id": "render-family-house-aerial",
+        "role": "render",
+        "nativeWidth": 1536,
+        "nativeHeight": 1024,
+        "upscaleAtTargetWidth": 1.25,
+        "maxSafeDisplayWidth": 2304
+      },
+      {
+        "id": "render-family-house-exterior",
+        "role": "render",
+        "nativeWidth": 1536,
+        "nativeHeight": 1024,
+        "upscaleAtTargetWidth": 1.25,
+        "maxSafeDisplayWidth": 2304
+      },
+      {
+        "id": "render-family-house-interior",
+        "role": "render",
+        "nativeWidth": 1536,
+        "nativeHeight": 1024,
+        "upscaleAtTargetWidth": 1.25,
+        "maxSafeDisplayWidth": 2304
+      },
+      {
+        "id": "wall/*",
+        "role": "wall",
+        "nativeWidth": 1536,
+        "nativeHeight": 1086,
+        "upscaleAtTargetWidth": 1.25,
+        "maxSafeDisplayWidth": 2304
+      }
+    ]
+  },
+  "totals": {
+    "files": 87,
+    "bytes": 20494417,
+    "byRole": {
+      "plan": {
+        "files": 4,
+        "bytes": 257590
+      },
+      "render": {
+        "files": 3,
+        "bytes": 784564
+      },
+      "clip": {
+        "files": 8,
+        "bytes": 4807333
+      },
+      "brand": {
+        "files": 2,
+        "bytes": 15284
+      },
+      "audio": {
+        "files": 9,
+        "bytes": 2369879
+      },
+      "wall": {
+        "files": 60,
+        "bytes": 7531797
+      }
+    }
+  },
+  "assets": [
+    {
+      "id": "plan-family-house",
+      "src": "plans/plan-family-house.svg",
+      "role": "plan",
+      "bytes": 57042,
+      "sha256": "a2d8c2aaaae2bff7c31cbefd05fb5317c1bdded18d982258659a3b5f6a35260a",
+      "width": 800,
+      "height": 736.58,
+      "viewBox": [
+        -2569.6,
+        -2569.6,
+        17539.2,
+        16148.8
+      ],
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/plan-family-house.svg"
+    },
+    {
+      "id": "plan-family-house-annotated",
+      "src": "plans/plan-family-house-annotated.svg",
+      "role": "plan",
+      "bytes": 66978,
+      "sha256": "f255b7d081d5e0c62317ab839ab2fc48851d5fd79a367673d0fc282f67a82cd0",
+      "width": 800,
+      "height": 736.58,
+      "viewBox": [
+        -2569.6,
+        -2569.6,
+        17539.2,
+        16148.8
+      ],
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/plan-family-house-annotated.svg"
+    },
+    {
+      "id": "plan-family-house-sheet",
+      "src": "plans/plan-family-house-sheet.svg",
+      "role": "plan",
+      "bytes": 57694,
+      "sha256": "87881616a714928d06daf3e177eac758100832c0f861defd5294224bffaf8654",
+      "width": 800,
+      "height": 789.45,
+      "viewBox": [
+        -2569.6,
+        -2569.6,
+        17539.2,
+        17308
+      ],
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/plan-family-house-sheet.svg"
+    },
+    {
+      "id": "plan-hero",
+      "src": "plans/plan-hero.svg",
+      "role": "plan",
+      "bytes": 75876,
+      "sha256": "db7e7ea691ac25a8bad402c5fdaad57118af4d0299c10e919fd7f26bd6c6fb76",
+      "width": 800,
+      "height": 565.66,
+      "viewBox": [
+        -8850,
+        -4140,
+        29700,
+        21000
+      ],
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/assets/plan-hero.svg"
+    },
+    {
+      "id": "render-family-house-aerial",
+      "src": "renders/render-family-house-aerial.webp",
+      "role": "render",
+      "bytes": 308696,
+      "sha256": "2b1d71dcb4f7cedf6a558991daf152721439b9f7ff3e7f8bd5783b60ef77e715",
+      "width": 1536,
+      "height": 1024,
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/render-family-house-aerial.webp"
+    },
+    {
+      "id": "render-family-house-exterior",
+      "src": "renders/render-family-house-exterior.webp",
+      "role": "render",
+      "bytes": 274006,
+      "sha256": "cad1389715b6ab795ff3e0cf7caada3b270841e7605113490ad16aaa248bb223",
+      "width": 1536,
+      "height": 1024,
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/render-family-house-exterior.webp"
+    },
+    {
+      "id": "render-family-house-interior",
+      "src": "renders/render-family-house-interior.webp",
+      "role": "render",
+      "bytes": 201862,
+      "sha256": "399e8cc51a94e8be34e68980db68db4eecce8b94c09698dbff72530c66373fa0",
+      "width": 1536,
+      "height": 1024,
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/render-family-house-interior.webp"
+    },
+    {
+      "id": "c05-fit",
+      "src": "clips/c05-fit.mp4",
+      "role": "clip",
+      "bytes": 273352,
+      "sha256": "d7f99c5f37680d87d29240d453a9a9ac14550cecee647658d99d07b511059342",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 30,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 900,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c05-fit.mp4"
+    },
+    {
+      "id": "c06-review-pins",
+      "src": "clips/c06-review-pins.mp4",
+      "role": "clip",
+      "bytes": 462680,
+      "sha256": "1a266708c4376455959d924bb962b0248b96d7ecc72ea63403868110e1e5939e",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 44,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1320,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c06-review-pins.mp4"
+    },
+    {
+      "id": "c07-edit-type",
+      "src": "clips/c07-edit-type.mp4",
+      "role": "clip",
+      "bytes": 444351,
+      "sha256": "2efcf56bfc87d923f6540f282aaffff04968892775dd8759dd3c3990d86fafe3",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 54,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1620,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c07-edit-type.mp4"
+    },
+    {
+      "id": "c08-morph",
+      "src": "clips/c08-morph.mp4",
+      "role": "clip",
+      "bytes": 496632,
+      "sha256": "fb81615bcb6cdb37ea4b4d76674454ec61617b744f7466b2e0d060c41c338ce1",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 50,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1500,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c08-morph.mp4"
+    },
+    {
+      "id": "c10-select-room",
+      "src": "clips/c10-select-room.mp4",
+      "role": "clip",
+      "bytes": 206734,
+      "sha256": "9f01f7bf09ad51643e7a3c6ad0f0aefeff918e615d1d1c3b8e5a4ef970883036",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 22,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 660,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c10-select-room.mp4"
+    },
+    {
+      "id": "c11-shrink-result",
+      "src": "clips/c11-shrink-result.mp4",
+      "role": "clip",
+      "bytes": 409862,
+      "sha256": "7e4de256ce767dcc6a398b5ff6486f80a05817b8ad54b9347ca4f22720b547c8",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 24,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 720,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c11-shrink-result.mp4"
+    },
+    {
+      "id": "c13-timeline",
+      "src": "clips/c13-timeline.mp4",
+      "role": "clip",
+      "bytes": 524464,
+      "sha256": "f5989c95b778cf48aa806ad3d125fc1954758540ee6d3050f518b9cbc9e63402",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 44,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1320,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c13-timeline.mp4"
+    },
+    {
+      "id": "c15-render-full",
+      "src": "clips/c15-render-full.mp4",
+      "role": "clip",
+      "bytes": 1989258,
+      "sha256": "e5d17ee7c1f7763fcdfc59c179179ea88f45adef0ad4ecec98fc57877c895260",
+      "width": 1786,
+      "height": 944,
+      "durationSec": 37,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1110,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/videos/c15-render-full.mp4"
+    },
+    {
+      "id": "archcanvas-icon",
+      "src": "brand/archcanvas-icon.svg",
+      "role": "brand",
+      "bytes": 5847,
+      "sha256": "8e4b1d82017e1e169a8b774ff00917dd133dcd47adfe00a2ede7d230a68c8dcd",
+      "width": 1024,
+      "height": 1024,
+      "viewBox": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/archcanvas-icon.svg"
+    },
+    {
+      "id": "archcanvas-wordmark",
+      "src": "brand/archcanvas-wordmark.svg",
+      "role": "brand",
+      "bytes": 9437,
+      "sha256": "2a5d602b12b8ba1d7037d096acf5ce66b44d9c9e7c2e4bce835bc5bf922d41e3",
+      "width": 1017.8,
+      "height": 184.8,
+      "viewBox": [
+        0,
+        0,
+        1017.8,
+        184.8
+      ],
+      "durationSec": null,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/capture/assets/archcanvas-wordmark.svg"
+    },
+    {
+      "id": "bgm",
+      "src": "audio/bgm.mp3",
+      "role": "audio",
+      "bytes": 2209870,
+      "sha256": "608466ff68ca024c6d0765f4fdad31f3c93a6a1a7e6a6f907b0d4b0ee1ddcd95",
+      "width": null,
+      "height": null,
+      "durationSec": 92,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/bgm.mp3"
+    },
+    {
+      "id": "sfx-instrument",
+      "src": "audio/sfx-instrument.mp3",
+      "role": "audio",
+      "bytes": 15090,
+      "sha256": "ace3ec778bd83de54f025a62991a7ea9e105c6ea4cde3135fa5736f263f3d214",
+      "width": null,
+      "height": null,
+      "durationSec": 0.88,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-instrument.mp3"
+    },
+    {
+      "id": "sfx-paper-settle",
+      "src": "audio/sfx-paper-settle.mp3",
+      "role": "audio",
+      "bytes": 24703,
+      "sha256": "af4ba18d7c5d7181960419341fcb88b25eb39ac8057532e30ba9ecdf0ada7672",
+      "width": null,
+      "height": null,
+      "durationSec": 1.48,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-paper-settle.mp3"
+    },
+    {
+      "id": "sfx-paper-sweep",
+      "src": "audio/sfx-paper-sweep.mp3",
+      "role": "audio",
+      "bytes": 15090,
+      "sha256": "9c6195b7c0758f702114fb9d87a6542ddb0faf372d6a3b99c2d472ab20579e16",
+      "width": null,
+      "height": null,
+      "durationSec": 0.88,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-paper-sweep.mp3"
+    },
+    {
+      "id": "sfx-pencil-line",
+      "src": "audio/sfx-pencil-line.mp3",
+      "role": "audio",
+      "bytes": 26793,
+      "sha256": "101f461eaaa1a4ac89b354e1250dc6f2c11618aad838ed2d2a65a6736c00253d",
+      "width": null,
+      "height": null,
+      "durationSec": 1.6,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-pencil-line.mp3"
+    },
+    {
+      "id": "sfx-stamp",
+      "src": "audio/sfx-stamp.mp3",
+      "role": "audio",
+      "bytes": 17180,
+      "sha256": "ca4f263975a98d29dee65b5be5cbd24463c445c657c518fc415530f8cb480ead",
+      "width": null,
+      "height": null,
+      "durationSec": 1,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-stamp.mp3"
+    },
+    {
+      "id": "sfx-tick",
+      "src": "audio/sfx-tick.mp3",
+      "role": "audio",
+      "bytes": 8821,
+      "sha256": "67dc64ba12a414f22f3e9267d6f8deb167ec212487e7501bab336011eb601e00",
+      "width": null,
+      "height": null,
+      "durationSec": 0.48,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-tick.mp3"
+    },
+    {
+      "id": "sfx-ui-click",
+      "src": "audio/sfx-ui-click.mp3",
+      "role": "audio",
+      "bytes": 10493,
+      "sha256": "f3e3fdfedce9bbdaf00d702d311e2cdb824026a5d923862b36d8403db71797f2",
+      "width": null,
+      "height": null,
+      "durationSec": 0.6,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-ui-click.mp3"
+    },
+    {
+      "id": "sfx-warm-swell",
+      "src": "audio/sfx-warm-swell.mp3",
+      "role": "audio",
+      "bytes": 41839,
+      "sha256": "e3028e8f4cf11a78cefbf4124afc0f3196f6bac7a0b244b93245a0139db57791",
+      "width": null,
+      "height": null,
+      "durationSec": 2.56,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-warm-swell.mp3"
+    }
+  ],
+  "wall": {
+    "$comment": "60 rasterised plans from one recorded designer benchmark run. Real machine output, not curated: this is a montage, and no single tile may be presented as a showcase plan. Each row lives at public/wall/<name> and is verified individually like any other ledger row. Uniform width, RAGGED HEIGHT (see sizeClasses) — lay it out on a fixed column width.",
+    "role": "wall",
+    "dest": "wall",
+    "count": 60,
+    "totalBytes": 7531797,
+    "resolutionBound": true,
+    "durationSec": null,
+    "fps": null,
+    "uniformWidth": true,
+    "uniformHeight": false,
+    "width": 1536,
+    "height": null,
+    "heightRange": [
+      1086,
+      2172
+    ],
+    "sizeClasses": [
+      {
+        "size": "1536x1086",
+        "count": 39
+      },
+      {
+        "size": "1536x1102",
+        "count": 1
+      },
+      {
+        "size": "1536x1165",
+        "count": 1
+      },
+      {
+        "size": "1536x1169",
+        "count": 1
+      },
+      {
+        "size": "1536x1311",
+        "count": 1
+      },
+      {
+        "size": "1536x2172",
+        "count": 17
+      }
+    ],
+    "fromDir": "D:/github_repository/archcanvas-promo-video/capture/assets/_archcanvas-library/bench",
+    "files": [
+      {
+        "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-against-wall-bath.png",
+        "bytes": 121181,
+        "sha256": "1ce5ea3e89a6a66fcf33b4e8f4621b0ed42319533ab7d6b2339ee0be983f6d1d",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-dims-auto-cottage.png",
+        "bytes": 149272,
+        "sha256": "fd68e5aa503b84d6d2640863924c6fe4983c16588c3af1af9a7fdffc38c212cd",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-relational-studio.png",
+        "bytes": 92106,
+        "sha256": "c758bad6902fa91cff009a175fda40c55d3ca730ae2e3faf3a190e133d3cceed",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-small-office.png",
+        "bytes": 77683,
+        "sha256": "125db68e72843838bbb8df945201fe94add09e306b9a115bb58ea221325dda70",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-studio-1br.png",
+        "bytes": 99297,
+        "sha256": "6595debbe964ade7212dffe61fa73d01345fa469264e1572a0af4e13c7542148",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-two-bed-hall.png",
+        "bytes": 211546,
+        "sha256": "5139d8cba20637160c5b5b914286bd0229a4823780ebc2880a182c8011b16531",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-against-wall-bath.png",
+        "bytes": 161891,
+        "sha256": "75e18f8b961d6e7f322fb36028f6ca72a9424d99f5930cc54ccf6a12b7ca1a7c",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-dims-auto-cottage.png",
+        "bytes": 169668,
+        "sha256": "8b0bcfa3d8798b93f94f1ad39cb5455333ffd40f9db3504c0b6240bff9c6b110",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-relational-studio.png",
+        "bytes": 124597,
+        "sha256": "c7910012bffab910827a5a8dc64cd6db1ea6c7e03503fc98b836825af8517c74",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-small-office.png",
+        "bytes": 169203,
+        "sha256": "a26e0fb0665e51018de395e049bf7250456c6f02bee91c405fa903b1d045277c",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-studio-1br.png",
+        "bytes": 109780,
+        "sha256": "97eec9b7970eae8b8ef15ff46d90dfdc4e8835b13fd94a18d12433ba4ac51713",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-two-bed-hall.png",
+        "bytes": 208836,
+        "sha256": "f0f011bacdf5bb9015fe8b0cfdf9623c9e7a3c51ec953ba19bd630c94318773c",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-against-wall-bath.png",
+        "bytes": 62395,
+        "sha256": "5904481ce1478473b7dc78f15e6e89a514ad9e2cbf3268936708718da52848c8",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-dims-auto-cottage.png",
+        "bytes": 105026,
+        "sha256": "c095556522eda455cefff7dea120f18a4ae8c6c39bc606d9d6a13fbfd2b53be1",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-relational-studio.png",
+        "bytes": 90128,
+        "sha256": "a451e783f11966b6f1d0324acc51b437f15d4c3be1b6e535015c5d5a647282dd",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-small-office.png",
+        "bytes": 62303,
+        "sha256": "13276a5dce4221c24cc61c09d375f32fe9ba3a3c2a2206603994fa44e1031183",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-studio-1br.png",
+        "bytes": 81180,
+        "sha256": "3352ff87f50c562ddef7cca855dfef1de65b08ca443d5234c97eb093616fed69",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-two-bed-hall.png",
+        "bytes": 88798,
+        "sha256": "cc04446e239e319597c408f8f70aff65373308ad8d4a8535f1f5e6ddf815bc18",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-against-wall-bath.png",
+        "bytes": 89543,
+        "sha256": "430211f234fdd717444a28469101f1a05f38c1931720f4f3a3a4b0146d6f3aca",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-dims-auto-cottage.png",
+        "bytes": 108420,
+        "sha256": "35cc5b0cde4b7f84079a30c91c9dc8e6f850f85ee8768ce3afbb93603d421ecb",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-relational-studio.png",
+        "bytes": 130456,
+        "sha256": "f8566c3c2fdc056cf459b17f26bec8c9101dc516e12bc9b04619a0cc0db20f70",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-small-office.png",
+        "bytes": 99371,
+        "sha256": "1a8f385ad16cea9bc45a3a3718fc682e1c1edcbe0bf90ae5385beb06931b1c8e",
+        "width": 1536,
+        "height": 1102
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-studio-1br.png",
+        "bytes": 82095,
+        "sha256": "c96870b1e8637404eec20a077cb9bf64b408e4c1b9c1c79c78edd5e38285cec4",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-two-bed-hall.png",
+        "bytes": 109601,
+        "sha256": "0d9d4d7854567dfe53b556fb6f51e1e8385aaf778230bc2a5c6fed9052899d42",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-accessible-flat.png",
+        "bytes": 69360,
+        "sha256": "beb7497f5fb7fc89e7f1d2267053a2dbb56d3cc9e099aba3d85737f3c4da20f0",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-bungalow.png",
+        "bytes": 153678,
+        "sha256": "c1b73b36814310306e7858e8c5bf840ebe623741d002da97a73ea5dd7a782985",
+        "width": 1536,
+        "height": 1165
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-galley-kitchen.png",
+        "bytes": 99496,
+        "sha256": "48e1cfaf8500b9a667fd748deb3ce8fbd2addf5817416365f0aee2e61bb209e8",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-l-shaped-flat.png",
+        "bytes": 67395,
+        "sha256": "b6b4aac7e63d02aa2f902dbcb04daa72a9659fa7fead0dcee86333f6650d1f96",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-open-plan-loft.png",
+        "bytes": 74870,
+        "sha256": "8af80f5182be23f2420213e7ab147e81d6ae1413037966cb84033b7c029ab424",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-reception-suite.png",
+        "bytes": 100079,
+        "sha256": "65544b39c766bda5c7bb68309747b5bfc20f72ba6703518dc531affcbc932b0e",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-scripting-units.png",
+        "bytes": 120954,
+        "sha256": "37cf43b28a4b96efa824d2f1022a2e9e13996fd9b19782bba0315d0f1a041601",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-bedrooms.png",
+        "bytes": 107212,
+        "sha256": "b86bc42b715795a2532404d5b965190ac156e88033d6a0f2cb736ba8b61745a1",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-kitchen-flat.png",
+        "bytes": 67098,
+        "sha256": "87fc91681c4444b29f2b26055828a29e43d70648b73003587e4c39f4f8204d6c",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-office-mix.png",
+        "bytes": 68566,
+        "sha256": "0b02d105765ab0f0adbc3d3466a72385ca9352f3784bcbfaed4f8a0a8c7f76db",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-wet-room.png",
+        "bytes": 82783,
+        "sha256": "db5a7dfdda44cf13a17ff50e5087d27a8229f9984378b405d9ce602da58489c4",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-strip-attach-clean.png",
+        "bytes": 109974,
+        "sha256": "acd82fbdcf88c24d805be9785cd6c3a2a668729a9a33de7315de14b8cc1e4b13",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-strip-corridor.png",
+        "bytes": 93177,
+        "sha256": "e7fd01c0206fd0209769159ef760485afbc118aa9dcaa4f733b15af37442abb4",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-three-bed-2bath.png",
+        "bytes": 94059,
+        "sha256": "19fbeede2bf50861726945f3a50f6c9e653ed85435e0d81f2c5cfc6693950ad8",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-two-bath-flat.png",
+        "bytes": 155674,
+        "sha256": "15f327d21c1eb8972e2b9378aa33f37509e88ad2e3abbbfed283ad985e326690",
+        "width": 1536,
+        "height": 1169
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-two-bed-hall.png",
+        "bytes": 97625,
+        "sha256": "f6b36fc7bb9398791a0b20b93d2059b3dc7c09640fe3ea2b4e295789c8f0ea72",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-accessible-flat.png",
+        "bytes": 127128,
+        "sha256": "0776a5245dd830bfb70c30044063ac33b2e6b4d83e7248b5ab4933f2a2dd9d59",
+        "width": 1536,
+        "height": 1311
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-bungalow.png",
+        "bytes": 214784,
+        "sha256": "c3ab9039af3c4f7268f90487eef074ac7718cbbec4b4f3d5bdb9cfe91c343a4f",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-galley-kitchen.png",
+        "bytes": 128439,
+        "sha256": "005da3569817f365fd3b15153ce97ed5aae9d5af8606da5594a67b50ab45d15f",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-l-shaped-flat.png",
+        "bytes": 115667,
+        "sha256": "3886f8d4b413b60fd43b6e7eda59c50fb2d99b74cc6bc0b41bc88137de4f76c1",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-open-plan-loft.png",
+        "bytes": 158331,
+        "sha256": "14ebc235e4e2af46d79dc8c65e7a5fd8cc4fa596826c575e3f83162f8cdbaab4",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-reception-suite.png",
+        "bytes": 126352,
+        "sha256": "0a7ba5e7c135d2ddc5cb08ee70977c6ac327c12e9b56cff8a74faadbf92bfc6f",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-scripting-units.png",
+        "bytes": 193384,
+        "sha256": "d5390da1ad1b43b034d39a06838586f07624424ad581a5d500783741ea121811",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-bedrooms.png",
+        "bytes": 204783,
+        "sha256": "1f219534672af5ce5bd037e4d1c7fdaddd941f4e41689ea16f0190310f8276a7",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-kitchen-flat.png",
+        "bytes": 111639,
+        "sha256": "40cc8d21605991acd7ec8074668c664e36ad48942d2628551da86f9545fda033",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-office-mix.png",
+        "bytes": 90009,
+        "sha256": "7f48e588dc4418af9888b720d1395654eebb37334ad6df8ae80bbc35ee4e0dab",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-wet-room.png",
+        "bytes": 171184,
+        "sha256": "1117e2ef007532f2912bb7b94722a6158aad8c4f534d4f356940b71997c95aa3",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-strip-attach-clean.png",
+        "bytes": 129239,
+        "sha256": "31244773ca542a13a383ec8d36dcc155ab4a3a698ed8b3738e9ab6402b7c126a",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-strip-corridor.png",
+        "bytes": 319542,
+        "sha256": "71ed08190924696857a64960febf14f3155d51eabc1838e9456c55e9b276b5d5",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-three-bed-2bath.png",
+        "bytes": 262761,
+        "sha256": "1094b0586456b0a26f4686c423a053edad9fab2515d75ca71ca8c62c2487d71d",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-two-bath-flat.png",
+        "bytes": 147062,
+        "sha256": "fb32b5a6da59a9f0cf60cb253e99e9145482524fab24806697ecb677b8e903a2",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-two-bed-hall.png",
+        "bytes": 208836,
+        "sha256": "f0f011bacdf5bb9015fe8b0cfdf9623c9e7a3c51ec953ba19bd630c94318773c",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-against-wall-bath.png",
+        "bytes": 99079,
+        "sha256": "3c43d24bc3ad80ab022ea6eeab0db83464c73e0569af34f4bb8d39907af1619c",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-dims-auto-cottage.png",
+        "bytes": 91024,
+        "sha256": "12ee7122c76d97ad11af570ab1f5bdca9553264efd4edc4d77098825065cb91d",
+        "width": 1536,
+        "height": 1086
+      },
+      {
+        "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-relational-studio.png",
+        "bytes": 164601,
+        "sha256": "0c34ba49f499a589e68e216e580b9a16bce5fffc7c03fabf7045dec4ee4eea70",
+        "width": 1536,
+        "height": 2172
+      },
+      {
+        "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-small-office.png",
+        "bytes": 101577,
+        "sha256": "acffadbea124589b438b214668222bef32cf761488c86c93149e8ef93641935f",
+        "width": 1536,
+        "height": 1086
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "drafting-room-full",
+      "src": "audio/source/drafting-room-full.mp3",
+      "role": "audio",
+      "bytes": 4727970,
+      "sha256": "59f4a1d7e0567f64a3c1cf192fd405955c5ca1f09b9a94257dd3e451889c2c0a",
+      "width": null,
+      "height": null,
+      "durationSec": 203.9335,
+      "fps": null,
+      "resolutionBound": false,
+      "from": "D:/github_repository/archcanvas-promo-video/audio/source/drafting-room-full.mp3"
+    }
+  ]
+}
