@@ -158,7 +158,12 @@ npm run verify:flash out/<master>.mp4
 ## Don'ts
 
 - Don't commit the masters. ~90MB each, four of them. GitHub Release assets.
-- Don't commit `.env`, `public/`, or `audio/source/`.
+- Don't commit `.env`, `audio/source/`, or `public/` — **except the generated
+  audio**, which is tracked. The line: material COPIED from elsewhere or that
+  can be RE-RENDERED stays out; material GENERATED HERE that cannot be
+  reproduced comes in. The eight voiceover takes and the four new sound effects
+  cost credits, are not deterministic, total 1.04 MB, and were the only copy in
+  existence — a fresh clone could not render the film without them.
 - Don't add a cut. The film is one camera move; that is the whole idea.
 - Don't name ArchLang, show `.arch` source, or write "as code".
 - Don't put a number on screen that isn't in `src/data/`.

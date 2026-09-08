@@ -328,6 +328,7 @@ function stageRow({ id, role, src, destRel }) {
     id,
     src: destRel,
     role,
+    provenance: "source-library",
     bytes,
     sha256: hash,
     width: m.width,
@@ -346,6 +347,17 @@ function stageRow({ id, role, src, destRel }) {
 // ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
+
+// Read before anything overwrites it: the tracked ledger is this script's only memory of
+// generated assets, which have no other durable copy.
+const previousLedger = (() => {
+  if (!fs.existsSync(LEDGER)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(LEDGER, "utf8"));
+  } catch {
+    return null; // an unreadable ledger is rebuilt from scratch; verify-assets reports it
+  }
+})();
 
 console.log(`sync-assets: source = ${slash(SOURCE)}${FORCE ? "  (--force)" : ""}`);
 fs.mkdirSync(PUBLIC_DIR, { recursive: true });
@@ -375,6 +387,156 @@ for (const group of GROUPS) {
     bytes: stats.bytes - before.bytes,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Locally generated audio — adopted into the ledger, not copied from the source
+// ---------------------------------------------------------------------------
+//
+// `scripts/generate-sfx.mjs` (ElevenLabs) writes cues this film needs that the first film
+// never had. They are ledgered here for one reason: verify-assets is the only thing
+// standing between a truncated asset and a render that ships with a silent hole in it, and
+// it can only protect what the ledger names.
+//
+// The registry is `public/audio/` ITSELF — every mp3 there that did not come from the
+// source library. It is deliberately NOT a durable copy under repo-root `audio/`: that was
+// tried, and repo-root `audio/` is gitignored only at `audio/source/*`, so those files were
+// on track to be committed as ~528 KB of permanent tracked binaries. `public/audio/` is now
+// their ONLY home, and `"from": null` on a generated row is the intended steady state, not
+// a gap to be closed. A stray mp3 back at repo root is warned about below for that reason.
+//
+// Which makes these four the most fragile bytes in the repo: gitignored, with no local
+// copy, and unreproducible — a rerun costs four ElevenLabs requests and returns a
+// DIFFERENT sound, because only the prompt is deterministic, not the audio. So:
+//
+//   - This staging is ADDITIVE. Nothing in this script ever deletes.
+//   - The previous ledger is the tripwire. `src/data/assets.json` IS tracked, so it
+//     remembers these rows even when public/ does not. A generated row that was in the
+//     last ledger and has no file now is a HARD FAILURE, never a silent drop — because
+//     the alternative is a sync that reports success while quietly forgetting four
+//     irreplaceable files. That is not hypothetical: keying this off repo-root `audio/`
+//     did exactly that once, and wiping public/audio/ did it again, both reporting green.
+//     Override with --drop-generated only when removing a cue is what you actually meant.
+//
+// `audio/source/` is not scanned: those are raw inputs, staged separately below.
+
+const DURABLE_AUDIO_DIR = path.join(ROOT, "audio");
+const STAGED_AUDIO_DIR = path.join(PUBLIC_DIR, "audio");
+const stagedBasenames = new Set(assets.map((a) => path.basename(a.src)));
+const generatedBefore = { copied: stats.copied, skipped: stats.skipped, bytes: stats.bytes };
+
+const listMp3 = (dir) =>
+  fs.existsSync(dir)
+    ? fs
+        .readdirSync(dir, { withFileTypes: true })
+        .filter((e) => e.isFile() && e.name.toLowerCase().endsWith(".mp3"))
+        .map((e) => e.name)
+        .sort()
+    : [];
+
+// Repo-root `audio/` is gitignored only at `audio/source/*`, so an mp3 sitting directly in
+// it is bound for a permanent place in git history. Staging it is still the right call —
+// bytes the film loads must be ledgered — but say so, because this is a trap the project
+// has already fallen into once.
+const durableStrays = listMp3(DURABLE_AUDIO_DIR);
+if (durableStrays.length > 0) {
+  console.log(
+    `  ! ${durableStrays.length} mp3(s) directly in audio/ (${durableStrays.join(", ")}) are NOT gitignored ` +
+      "— only audio/source/* is. They will be committed as tracked binaries unless moved or ignored.",
+  );
+}
+
+const generatedNames = [...new Set([...listMp3(STAGED_AUDIO_DIR), ...listMp3(DURABLE_AUDIO_DIR)])]
+  .filter((name) => !stagedBasenames.has(name))
+  .sort();
+
+const DROP_GENERATED = process.argv.includes("--drop-generated");
+const previousGenerated = (previousLedger?.assets ?? []).filter((a) => a.provenance === "generated");
+const lostGenerated = previousGenerated.filter((a) => !fs.existsSync(path.join(PUBLIC_DIR, a.src)));
+
+if (lostGenerated.length > 0 && !DROP_GENERATED) {
+  die(
+    [
+      `${lostGenerated.length} generated cue(s) are in the committed ledger but missing from public/:`,
+      "",
+      ...lostGenerated.map(
+        (a) => `  ${a.src}  ${a.bytes} bytes  ${a.durationSec}s  sha256 ${a.sha256}`,
+      ),
+      "",
+      "These have no durable copy anywhere and cannot be reproduced: re-running",
+      "scripts/generate-sfx.mjs costs four ElevenLabs requests and returns a DIFFERENT sound,",
+      "because the prompt is deterministic but the audio is not.",
+      "",
+      "Refusing to write a ledger that silently forgets them. Restore the files, or pass",
+      "--drop-generated if dropping the cue is genuinely what you meant.",
+    ].join("\n"),
+  );
+}
+if (lostGenerated.length > 0) {
+  console.log(`  (--drop-generated) dropping ${lostGenerated.length} missing generated cue(s) from the ledger`);
+}
+
+const generatedRows = generatedNames.map((name) => {
+  const destRel = `audio/${name}`;
+  const dstAbs = path.join(PUBLIC_DIR, destRel);
+  const durable = path.join(DURABLE_AUDIO_DIR, name);
+
+  // Prefer the durable copy when there is one; otherwise the staged file IS the only copy.
+  if (fs.existsSync(durable)) stage(durable, dstAbs);
+  else {
+    const bytes = fs.statSync(dstAbs).size;
+    stats.skipped += 1;
+    stats.bytes += bytes;
+  }
+
+  const m = measureAudio(dstAbs);
+  return {
+    id: name.replace(/\.mp3$/i, ""),
+    src: destRel,
+    role: "audio",
+    provenance: "generated",
+    bytes: fs.statSync(dstAbs).size,
+    sha256: sha256(dstAbs),
+    width: null,
+    height: null,
+    durationSec: m.durationSec,
+    fps: null,
+    resolutionBound: false,
+    // Where a re-sync would restore it from, or null when the staged file is the only copy.
+    from: fs.existsSync(durable) ? slash(durable) : null,
+  };
+});
+
+// The cue list `scripts/generate-sfx.mjs` published, cross-checked against what is on disk.
+// A cue named there with no file is the blank-region failure this whole gate exists to stop.
+const SFX_MANIFEST = path.join(STAGED_AUDIO_DIR, "sfx-manifest.json");
+if (fs.existsSync(SFX_MANIFEST)) {
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(SFX_MANIFEST, "utf8"));
+  } catch (err) {
+    die(`public/audio/sfx-manifest.json is not valid JSON: ${String(err.message).split("\n")[0]}`);
+  }
+  const ledgered = new Set([...stagedBasenames, ...generatedNames]);
+  const orphans = Object.entries(manifest.sfx ?? {})
+    .map(([id, cue]) => cue.file ?? `${id}.mp3`)
+    .filter((file) => !ledgered.has(file));
+  if (orphans.length > 0) {
+    die(
+      `sfx-manifest.json names ${orphans.length} cue(s) with no file in public/audio/: ${orphans.join(", ")}. ` +
+        "Re-run scripts/generate-sfx.mjs — Remotion renders these as silence, not as an error.",
+    );
+  }
+}
+
+assets.push(...generatedRows);
+groupSummaries.push({
+  label: "generated",
+  dest: "public/audio/",
+  n: generatedRows.length,
+  copied: stats.copied - generatedBefore.copied,
+  skipped: stats.skipped - generatedBefore.skipped,
+  bytes: stats.bytes - generatedBefore.bytes,
+});
 
 // The plan wall — 60 files, treated as one montage.
 const wallSrcDir = from(WALL_SRC_DIR);
@@ -450,6 +612,7 @@ const sources = SOURCES.map((item) => {
     id: item.id,
     src: destRel,
     role: item.role,
+    provenance: "source-library",
     bytes,
     sha256: hash,
     width: m.width,
@@ -556,6 +719,10 @@ const ledger = {
     "",
     "Regenerate with `npm run sync:assets`. Verify with `npm run verify:assets` — Remotion",
     "fails SOFTLY on a missing staticFile(), so an unverified render can ship with a hole in it.",
+    "",
+    "Every row carries `provenance`: \"source-library\" means the bytes came out of",
+    "../archcanvas-promo-video and a sync restores them; \"generated\" means a script in this",
+    "repo made them (the ElevenLabs cues), whose durable copy lives at repo-root audio/.",
     "",
     "Shape: `assets` are individual files under public/<src>. `wall` groups 60 montage tiles",
     "under public/wall/<files[].name> (same guarantees, compact form). `sources` are raw inputs",
