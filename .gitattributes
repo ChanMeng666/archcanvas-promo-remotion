@@ -1,0 +1,23 @@
+# Normalize text to LF. Without this, Windows autocrlf makes every generated
+# JSON in src/data/ show as modified with no real content change.
+* text=auto eol=lf
+
+# Explicit binaries -- never normalize. A CRLF-mangled font or media file is
+# silently corrupt rather than loudly broken.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg text
+*.pdf binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.mp3 binary
+*.wav binary
+*.mp4 binary
+*.mkv binary
+*.mov binary
+*.webm binary
