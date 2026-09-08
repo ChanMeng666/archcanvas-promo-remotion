@@ -1,7 +1,14 @@
 # CLAUDE.md — ArchCanvas «Zoom Out»
 
-An ~85-second film for ArchCanvas (https://archcanvas.uk), built in Remotion.
-Four aspect ratios out of one edit. English, with a voiceover.
+A 75-second film for ArchCanvas (https://archcanvas.uk), built in Remotion.
+Four aspect ratios out of one edit. English, silent, carried by text in world
+space and one music bed.
+
+It had an ElevenLabs voiceover for a few hours on 2026-09-08. It was deleted
+over licensing, not craft — see `docs/decisions.md` D11 and the vendor-tier trap
+below. The words moved onto the screen, and they are all shorter than the
+spoken lines they came from, because a sentence that reads well aloud is usually
+too long to take in while a camera is moving past it.
 
 This is deliberately the **second** solution. A first film already exists at
 `../archcanvas-promo-video` (HyperFrames, 92s, silent, ivory paper, centred text
@@ -14,7 +21,7 @@ for what was deliberately not repeated.
 
 ## The three laws
 
-**1. Every word on screen or in the voiceover is cleared, or it does not ship.**
+**1. Every word on screen is cleared, or it does not ship.**
 `docs/copy-clearance.md` holds every phrase with the approved source it came
 from. `capture/verify-copy.mjs` enforces it and is a gate. A phrase with no
 clearance row fails the build — deliberately: the line nobody cleared is exactly
@@ -109,8 +116,9 @@ cost real time somewhere. Do not rediscover them.
 - **Don't probe audio durations in `calculateMetadata`.** It runs in Studio
   *and* in every render worker, and a catch-block that substitutes a default is
   how a film ships at placeholder timing with nobody noticing. Probe once with
-  ffprobe in `scripts/measure-vo.mjs`, commit the numbers to `src/data/vo.json`,
-  read them synchronously.
+  ffprobe in Node, commit the number, read it synchronously. (Nothing needs this
+  today — the bed is cut to length by `tools/prepare-bed.ps1` — but the next
+  person to add audio will be tempted.)
 - **Use the core `remotion` `<Audio>`, not `@remotion/media`'s.** The latter
   previewed fine and rendered a silent track (−91 dB across the file) in
   a11y-loop-promo-video. Worth retrying on a future release; not on this one.
@@ -124,6 +132,19 @@ cost real time somewhere. Do not rediscover them.
 - **Authored line breaks, rendered `nowrap`.** The same string breaks in
   different places at 1080 and 1920 wide; a bad break must show up as an
   overflow failure, not a silent reflow.
+- **Check a vendor's plan tier BEFORE spending its credits, not before shipping.**
+  ElevenLabs' free plan carries no commercial licence, and its terms say content
+  created outside a paid subscription — *before or after* — cannot be used
+  commercially. Upgrading later does not license what already exists. Twelve
+  generated assets were deleted over this. `GET /v1/user/subscription` answers it
+  in one call.
+- **A gate whose input set can go empty reports success by doing nothing.** This
+  project produced that failure four times in one day: the copy gate passed on an
+  empty `src/`, the asset gate's `staticFile()` check passed at zero calls, a wipe
+  of `public/audio` followed by a re-sync reported success with four irreplaceable
+  cues gone from disk *and* from the ledger, and an SSML `<phoneme>` tag silently
+  deleted the word it wrapped while the script file still contained it. Before
+  trusting a green gate, ask what it actually looked at.
 - **The camera's maximum zoom is bounded by the largest asset's native pixels**,
   which is a measured number in `src/data/assets.json`, not a guess. The
   renderings are roughly 1024–1536px wide.
@@ -143,10 +164,9 @@ cp .env.example .env              # ELEVENLABS_API_KEY (TTS + SFX scopes)
 npm run sync:assets               # stage assets from ../archcanvas-promo-video
 npm run dev                       # Remotion Studio
 
-npm run vo                        # ElevenLabs narration
-npm run vo:measure                # ffprobe -> src/data/vo.json (the film's clock)
-npm run sfx
-npm run captions                  # out/*.srt + out/*.vtt
+# music — the founder generates the take in SUNO, this cuts the bed
+node tools/analyze-music.mjs audio/source/<take>.mp3 75 --land 62.5
+pwsh -File tools/prepare-bed.ps1 -Source audio/source/<take>.mp3 -Start <s> -Length 75
 
 npm run lint                      # tsc
 npm run verify                    # assets -> timeline -> copy -> numbers
@@ -161,9 +181,9 @@ npm run verify:flash out/<master>.mp4
 - Don't commit `.env`, `audio/source/`, or `public/` — **except the generated
   audio**, which is tracked. The line: material COPIED from elsewhere or that
   can be RE-RENDERED stays out; material GENERATED HERE that cannot be
-  reproduced comes in. The eight voiceover takes and the four new sound effects
-  cost credits, are not deterministic, total 1.04 MB, and were the only copy in
-  existence — a fresh clone could not render the film without them.
+  reproduced comes in. Today that is the SUNO take in `audio/source/` and the bed
+  cut from it: SUNO will not return the same track twice, so the original is
+  irreplaceable, and without them a fresh clone cannot render the film.
 - Don't add a cut. The film is one camera move; that is the whole idea.
 - Don't name ArchLang, show `.arch` source, or write "as code".
 - Don't put a number on screen that isn't in `src/data/`.
