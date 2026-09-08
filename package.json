@@ -23,7 +23,9 @@
     "verify:copy": "node capture/verify-copy.mjs",
     "verify:numbers": "node capture/verify-numbers.mjs",
     "verify:flash": "node capture/check-flash.mjs",
-    "ship": "npm run lint && npm run verify && pwsh -File ./render.ps1"
+    "ship": "npm run lint && npm run verify:strict && pwsh -File ./render.ps1",
+    "verify:copy:strict": "node capture/verify-copy.mjs --strict",
+    "verify:strict": "npm run verify:assets && npm run verify:timeline && npm run verify:copy:strict && npm run verify:numbers"
   },
   "dependencies": {
     "@remotion/cli": "4.0.522",

@@ -1,0 +1,74 @@
+{
+  "$comment": "THE SCRIPT — every word the film says or shows, and the only place copy is authored.\n\nNine stations, ids fixed: interior · pair · drawing · facts · note · lineage · wall ·\nsentence · mark. Components read this file; they never hold a sentence of their own. A\nstring that reaches the screen without passing through here has no clearance row, and\n`capture/verify-copy.mjs` fails the build on it (CLAUDE.md law 1).\n\nTHE VOICEOVER IS COPY. The old film was silent, so its text cards carried the whole\nargument; here the spoken lines carry it and the screen carries the evidence. Both halves\ngo through the same gate — `vo[].text` is scanned exactly as `cards[].lines[]` are.\n\n`wall` HAS NO ROW IN EITHER ARRAY, AND THAT IS THE POINT. The sixth station is a wall of\nsixty plans and it is deliberately silent: no voiceover, no card, no number. The rasters\nare offline-eval output, and B10 forbids presenting that eval as a public benchmark or\nputting a score on it, so the only honest treatment is to show the volume and say nothing.\nDo not \"fix\" the gap by writing a line for it.\n\n`cards[].lines` are AUTHORED LINE BREAKS, rendered `nowrap`. The same sentence breaks in\ndifferent places at 1080 and at 1920 wide, so a bad break must surface as an overflow\nfailure rather than reflow silently. Keep the longest line short enough to survive 1080.\n\nEvery line here is registered, byte-identically and in backticks, in docs/copy-clearance.md\nwith the approved source it came from. Change a character here and the gate goes red until\nthe row changes too — deliberately: the line nobody cleared is the line that slips.",
+
+  "vo": [
+    {
+      "id": "interior",
+      "text": "This room doesn't exist yet. It began as one sentence, from someone planning a build.",
+      "leadInSec": 0.6,
+      "tailSec": 0.8
+    },
+    {
+      "id": "pair",
+      "text": "It came out of the drawing underneath. The room you picture is the room you drew.",
+      "leadInSec": 0.5,
+      "tailSec": 0.7
+    },
+    {
+      "id": "drawing",
+      "text": "One plan, dimensioned to the millimetre. Walls that actually close.",
+      "leadInSec": 0.5,
+      "tailSec": 0.7
+    },
+    {
+      "id": "facts",
+      "text": "Every room reachable. Every area exact. Checked wall by wall.",
+      "leadInSec": 0.5,
+      "tailSec": 0.8
+    },
+    {
+      "id": "note",
+      "text": "And where it couldn't get something right, it tells you, in writing, on the drawing.",
+      "leadInSec": 0.6,
+      "tailSec": 1.0
+    },
+    {
+      "id": "lineage",
+      "text": "Refine it by talking to it. Move a wall, resize a room. Every edit is free.",
+      "leadInSec": 0.5,
+      "tailSec": 0.8
+    },
+    {
+      "id": "sentence",
+      "text": "Describe your home. Get a real, dimensioned floor plan.",
+      "leadInSec": 0.8,
+      "tailSec": 0.8
+    },
+    {
+      "id": "mark",
+      "text": "Pay only when you get a plan worth keeping.",
+      "leadInSec": 0.6,
+      "tailSec": 1.2
+    }
+  ],
+
+  "cards": [
+    {
+      "id": "sentence",
+      "lines": [
+        "Three bedrooms, open kitchen and living,",
+        "north-facing, single storey,",
+        "about 110 m2."
+      ]
+    },
+    {
+      "id": "mark",
+      "lines": [
+        "Pay only when you get a plan worth keeping.",
+        "A concept plan to take to a professional —",
+        "not a permit set.",
+        "archcanvas.uk"
+      ]
+    }
+  ]
+}
