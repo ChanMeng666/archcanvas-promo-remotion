@@ -6,9 +6,16 @@ rediscovering an argument that was already had.
 
 The first film is `../archcanvas-promo-video`: HyperFrames, 92 s, **silent**, ivory paper
 throughout, centred full-screen text cards, a chronological demo loop, 16:9 only. This one
-is one continuous camera pull-back across one infinite canvas, told **backwards**, with a
-voiceover, on a ground that washes from graphite night to the brand's ivory, in four
-aspect ratios. Read that film's `STORYBOARD.md` before arguing with anything below.
+is one continuous camera pull-back across one infinite canvas, told **backwards**, on a
+ground that washes from graphite night to the brand's ivory, in four aspect ratios, at
+75 s. Read that film's `STORYBOARD.md` before arguing with anything below.
+
+**Both films are silent, and that is a coincidence rather than a shared decision.** This
+one was built around an ElevenLabs voiceover, and lost it on 2026-09-08 to a licensing
+finding, not a creative one — see **D11**. What survived the removal is a different film
+from the first in every other respect, and in one respect it is now *more* different: the
+first film's words are centred cards that interrupt the picture, and this film's words
+live in world space and are passed by the camera.
 
 ---
 
@@ -19,8 +26,12 @@ aspect ratios. Read that film's `STORYBOARD.md` before arguing with anything bel
 differentiated claim (Layer 2, the receipt frame) and it was staged as such.
 
 **This film does not restage it.** At station `note` the camera simply pans past a real
-review pin sitting on the drawing and you read the product's own sentence in passing,
-while the voiceover says the Layer 2 line quietly and keeps moving.
+review pin sitting on the drawing and you read the product's own sentence in passing, and
+the camera does not stop.
+
+When the voiceover went (**D11**) the spoken Layer 2 line went with it, and it was
+deliberately **not** replaced with a card. The pin says it better, in the product's own
+words, and a card would have restaged exactly the thing this decision exists to avoid.
 
 **Why.** Two reasons, and the second is the load-bearing one.
 
