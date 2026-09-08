@@ -145,6 +145,21 @@ cost real time somewhere. Do not rediscover them.
   cues gone from disk *and* from the ledger, and an SSML `<phoneme>` tag silently
   deleted the word it wrapped while the script file still contained it. Before
   trusting a green gate, ask what it actually looked at.
+- **A killed Remotion render does not clean up after itself.** Each one leaves a
+  `remotion.exe`, a `node.exe` and a handful of `chrome-headless-shell.exe`
+  processes holding their memory. Three killed renders had accumulated **5.3 GB
+  across 18 orphaned processes** on a 16 GB machine, which then caused the next
+  render to be killed for memory — a loop that looks like "the film is too heavy
+  to render" and is not. Before blaming the composition, check:
+  `Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like "*archcanvas-promo-remotion
+ode_modules*" }`
+  and kill what it finds. Filter on the project path so the user's own browser is
+  never in the list.
+- **Sixty `<Img>` elements in one object will not render.** Remotion registers a
+  `delayRender` per image and never finishes the queue; it fails naming an
+  arbitrary-but-deterministic one, which reads like a corrupt file and is not.
+  Downscaling did not help, because the cost is the COUNT. A static montage is
+  one image: `scripts/build-wall-montage.mjs` composites it offline.
 - **The camera's maximum zoom is bounded by the largest asset's native pixels**,
   which is a measured number in `src/data/assets.json`, not a guess. The
   renderings are roughly 1024–1536px wide.
