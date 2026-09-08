@@ -214,7 +214,12 @@ export type WorldObjectId =
   | "reviewPin"
   | "lineageTrail"
   | "planWall"
-  | "endCard";
+  | "endCard"
+  | "cardInterior"
+  | "cardPair"
+  | "cardDrawing"
+  | "cardFacts"
+  | "cardLineage";
 
 /**
  * The 60-plan wall: fixed columns, ragged tiles, packed from the ledger.
@@ -362,6 +367,37 @@ export const LINEAGE = {
    * Order the rest of the trail around it however reads best.
    */
   fixedDrawing: { x: 1650, y: 230, w: 1100, h: 780 },
+
+  /**
+   * Earlier states of the same drawing, stacked behind the one that survived.
+   *
+   * Offset up and to the left so they read as a history rather than as a row.
+   * They are drawn as empty sheets, not as real earlier plans, and that is
+   * deliberate: we do not have those intermediate exports, and inventing them
+   * would be mocking up the one thing the film is arguing you can trust.
+   */
+  ghosts: [
+    { x: 1500, y: 120, w: 1100, h: 780 },
+    { x: 1350, y: 10, w: 1100, h: 780 },
+  ],
+
+  /**
+   * The conversation, as world-space cards.
+   *
+   * `startFrom` is in FRAMES at 30fps and skips each cut's 3s handle plus
+   * whatever lead-in the moment needs. Every clip is silent — the ledger
+   * records `hasAudioStream: false` on all of them — and 30fps, matching the
+   * composition, so they play without judder or resampling.
+   */
+  clips: [
+    { file: "lineage-instruction.mp4", startFrom: 420, x: 3120, y: 60, w: 1500, h: 793 },
+    { file: "lineage-morph.mp4", startFrom: 750, x: 3120, y: 1120, w: 1500, h: 793 },
+    { file: "lineage-shrink.mp4", startFrom: 210, x: 240, y: 1120, w: 1500, h: 793 },
+  ],
+
+  /** The trail's own box, so a component can convert its local coordinates. */
+  w: 6000,
+  h: 2600,
 } as const;
 
 /**
@@ -447,6 +483,22 @@ export type WorldObject = {
   fadeOutAt: string | null;
   /** Station during which it fades up from 0. */
   fadeInAt: string | null;
+  /**
+   * What this object is drawn ON, when it is text.
+   *
+   * A card is placed in world space, so it can land on the graphite ground at
+   * one station and on a white drawing sheet at the next — while its ink comes
+   * from the ground ramp, which knows nothing about what happens to be
+   * underneath it. The `drawing` station proved that the hard way: ink chosen
+   * correctly for a dark ground rendered white-on-white over the sheet, and the
+   * line simply was not there.
+   *
+   * The fix is to DECLARE the backing rather than infer it. A card on the sheet
+   * takes the drawing's own dark ink and no plate, so it reads as an annotation
+   * written on the paper — which is what the film is pretending it is. A card
+   * on the ground takes the ramp's ink. A card on a photograph takes white.
+   */
+  surface?: "ground" | "sheet" | "photo";
   /** Why it is where it is. */
   note: string;
 };
@@ -457,7 +509,7 @@ export type WorldObject = {
  * `briefLine` is first because it lives underneath `renderCard` at the origin
  * for the whole first act. Reorder these and station 7 stops working.
  */
-export const WORLD_OBJECTS: readonly WorldObject[] = [
+const BASE_OBJECTS: readonly WorldObject[] = [
   {
     id: "briefLine",
     rect: rect(0, 0, 1500, 420),
@@ -533,7 +585,15 @@ export const WORLD_OBJECTS: readonly WorldObject[] = [
     raster: "wallTile",
     rasterWorldW: WALL.colW,
     fadeOutAt: null,
-    fadeInAt: null,
+    // Faded up during `lineage`, one station before it is seen.
+    //
+    // It used to have no bounds at all, which meant sixty tiles were mounted on
+    // EVERY frame of the film -- about 200 megapixels of decode held from frame
+    // 0, thousands of world units off-frame, for a beat that starts at 52.5s.
+    // A still render died on a delayRender timeout because of it. The wall must
+    // exist before station 7 flies the camera up through it; it does not have
+    // to exist before the camera has ever looked down.
+    fadeInAt: "lineage",
     note: "60 plan rasters. Directly below the origin so station 7's push-in flies up THROUGH it.",
   },
   {
@@ -551,6 +611,7 @@ export const WORLD_OBJECTS: readonly WorldObject[] = [
     note: "Wordmark and terms, just below the sentence. Present from the widest shot onward, so the camera settles onto something that was already there.",
   },
 ];
+
 
 export const worldObject = (id: WorldObjectId): WorldObject => {
   const found = WORLD_OBJECTS.find((o) => o.id === id);
@@ -650,3 +711,126 @@ export const STATION_FRAMES: Record<string, StationFrame> = {
     note: "The same scale as `sentence`, 820 units lower: the sentence slides off the top and the wordmark settles. Zero drift — a film that has been moving for 80 seconds should come to a full stop.",
   },
 };
+
+/* ── station cards ────────────────────────────────────────────────────────── */
+
+/**
+ * Where a line of text sits, derived from its own station's framing.
+ *
+ * The film's words live IN the world — they scale and parallax with everything
+ * else, the way an annotation on a drawing does, rather than floating in screen
+ * space like a subtitle. That is the whole reason they read as part of the
+ * drawing rather than as a caption over it.
+ *
+ * But a world-space card is easy to lose: put it at a hand-picked coordinate
+ * and it is correct until somebody nudges the framing, after which it is
+ * off-frame in one aspect ratio and nobody notices until a master is cut. So a
+ * card is never placed absolutely. It is placed as a FRACTION OF ITS OWN
+ * STATION'S FRAME, which means it cannot leave the shot: move the framing and
+ * the card moves with it.
+ *
+ * `inset` is a fraction of the frame's short edge, so the margin looks the same
+ * whether the frame is wide or tall.
+ */
+const cardIn = (
+  stationId: string,
+  where: "topLeft" | "bottomLeft" | "bottomRight",
+  widthFrac: number,
+  heightFrac: number,
+): WorldRect => {
+  const f = STATION_FRAMES[stationId];
+  if (!f) throw new Error(`cardIn: no station frame "${stationId}"`);
+  const { cx, cy, w, h } = f.rect;
+  // 13%, not the 7.5% it started at, because a `hero`-fit station is COVERED
+  // into the viewport, not contained: `interior` is 1536x1024 shown across a
+  // 1920x1080 frame, so about 8% of its height is cropped off each edge before
+  // anything is drawn. At 7.5% the opening card's descenders and the product's
+  // AI-generated pill both sat inside that cropped band -- the pill being a
+  // provenance mark the film is required to show, which makes this a
+  // correctness margin rather than a taste one.
+  const inset = Math.min(w, h) * 0.13;
+  const cw = w * widthFrac;
+  const ch = h * heightFrac;
+
+  const left = cx - w / 2 + inset + cw / 2;
+  const right = cx + w / 2 - inset - cw / 2;
+  const top = cy - h / 2 + inset + ch / 2;
+  const bottom = cy + h / 2 - inset - ch / 2;
+
+  if (where === "topLeft") return rect(left, top, cw, ch);
+  if (where === "bottomRight") return rect(right, bottom, cw, ch);
+  return rect(left, bottom, cw, ch);
+};
+
+/**
+ * The five text cards, appended AFTER the base objects.
+ *
+ * Two reasons they live here rather than in the array above. They are painted
+ * last, so a word is never behind a drawing. And `cardIn` reads
+ * `STATION_FRAMES`, which is declared below the object list — evaluating it up
+ * there threw `Cannot access 'STATION_FRAMES' before initialization` at render
+ * time, not at compile time, which is exactly the kind of failure this file's
+ * module-scope derivations are otherwise good at avoiding.
+ */
+const CARD_OBJECTS: readonly WorldObject[] = [
+  {
+    id: "cardInterior",
+    rect: cardIn("interior", "bottomLeft", 0.62, 0.1),
+    station: "interior",
+    raster: null,
+    rasterWorldW: null,
+    fadeOutAt: "pair",
+    fadeInAt: null,
+    surface: "photo",
+    note: "The opening line, low in the frame over the rendering. Gone by the time the camera has pulled back far enough to show the drawing.",
+  },
+  {
+    id: "cardPair",
+    rect: cardIn("pair", "bottomLeft", 0.4, 0.14),
+    station: "pair",
+    raster: null,
+    rasterWorldW: null,
+    fadeOutAt: "drawing",
+    fadeInAt: "pair",
+    surface: "ground",
+    note: "The grounding claim, beneath the pair it describes.",
+  },
+  {
+    id: "cardDrawing",
+    rect: cardIn("drawing", "bottomLeft", 0.52, 0.13),
+    station: "drawing",
+    raster: null,
+    rasterWorldW: null,
+    fadeOutAt: "facts",
+    fadeInAt: "drawing",
+    surface: "sheet",
+    note: "Sits on the sheet's own margin while the CAD layers arrive above it.",
+  },
+  {
+    id: "cardFacts",
+    rect: cardIn("facts", "topLeft", 0.46, 0.19),
+    station: "facts",
+    raster: null,
+    rasterWorldW: null,
+    fadeOutAt: "note",
+    fadeInAt: "facts",
+    surface: "sheet",
+    note: "Top-left here, not bottom: the facts framing is tight on a room and the dimension strings run along its lower edge.",
+  },
+  {
+    id: "cardLineage",
+    rect: cardIn("lineage", "bottomRight", 0.34, 0.12),
+    station: "lineage",
+    raster: null,
+    rasterWorldW: null,
+    fadeOutAt: "wall",
+    fadeInAt: "lineage",
+    surface: "ground",
+    note: "Bottom-right, opposite the pin and the fixed drawing, so it never sits over the one thing this beat is for.",
+  },
+];
+
+/** Painter's order: base objects behind, words in front. */
+export const WORLD_OBJECTS: readonly WorldObject[] = [...BASE_OBJECTS, ...CARD_OBJECTS];
+
+

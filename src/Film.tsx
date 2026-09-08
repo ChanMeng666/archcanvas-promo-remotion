@@ -17,7 +17,16 @@ import {
 } from "./timeline";
 import { WORLD_OBJECTS } from "./world";
 import { Camera } from "./components/Camera";
-import { Placeholder, type WorldObjectRegistry } from "./components/primitives";
+import { type WorldObjectRegistry } from "./components/primitives";
+import { BriefLine } from "./components/BriefLine";
+import { RenderCard } from "./components/RenderCard";
+import { PlanSheet } from "./components/PlanSheet";
+import { DimStrings } from "./components/DimStrings";
+import { ReviewPin } from "./components/ReviewPin";
+import { LineageTrail } from "./components/LineageTrail";
+import { PlanWall } from "./components/PlanWall";
+import { EndCard } from "./components/EndCard";
+import { StationCard } from "./components/StationCard";
 
 /**
  * One world, one camera, no cuts.
@@ -49,14 +58,19 @@ import { Placeholder, type WorldObjectRegistry } from "./components/primitives";
  * would otherwise report it (silently, at 90 minutes, in the master).
  */
 const REGISTRY: WorldObjectRegistry = {
-  briefLine: Placeholder,
-  renderCard: Placeholder,
-  planSheet: Placeholder,
-  dimStrings: Placeholder,
-  reviewPin: Placeholder,
-  lineageTrail: Placeholder,
-  planWall: Placeholder,
-  endCard: Placeholder,
+  briefLine: BriefLine,
+  renderCard: RenderCard,
+  planSheet: PlanSheet,
+  dimStrings: DimStrings,
+  reviewPin: ReviewPin,
+  lineageTrail: LineageTrail,
+  planWall: PlanWall,
+  endCard: EndCard,
+  cardInterior: StationCard,
+  cardPair: StationCard,
+  cardDrawing: StationCard,
+  cardFacts: StationCard,
+  cardLineage: StationCard,
 };
 
 export const Film: React.FC = () => {

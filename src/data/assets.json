@@ -7,10 +7,10 @@
     "safeFactor": 1.5,
     "targetCompositionWidth": 1920,
     "tightestRaster": {
-      "id": "render-family-house-aerial",
-      "nativeWidth": 1536,
-      "nativeHeight": 1024,
-      "maxSafeDisplayWidth": 2304
+      "id": "wall/*",
+      "nativeWidth": 640,
+      "nativeHeight": 453,
+      "maxSafeDisplayWidth": 960
     },
     "worked": {
       "example": "render-family-house-aerial is 1536x1024; shown 1920px wide that is",
@@ -181,16 +181,16 @@
       {
         "id": "wall/*",
         "role": "wall",
-        "nativeWidth": 1536,
-        "nativeHeight": 1086,
-        "upscaleAtTargetWidth": 1.25,
-        "maxSafeDisplayWidth": 2304
+        "nativeWidth": 640,
+        "nativeHeight": 453,
+        "upscaleAtTargetWidth": 3,
+        "maxSafeDisplayWidth": 960
       }
     ]
   },
   "totals": {
     "files": 87,
-    "bytes": 22587432,
+    "bytes": 18478215,
     "byRole": {
       "plan": {
         "files": 4,
@@ -218,7 +218,7 @@
       },
       "wall": {
         "files": 60,
-        "bytes": 7531797
+        "bytes": 3422580
       }
     }
   },
@@ -846,41 +846,41 @@
     "role": "wall",
     "dest": "wall",
     "count": 60,
-    "totalBytes": 7531797,
+    "totalBytes": 3422580,
     "resolutionBound": true,
     "durationSec": null,
     "fps": null,
     "uniformWidth": true,
     "uniformHeight": false,
-    "width": 1536,
+    "width": 640,
     "height": null,
     "heightRange": [
-      1086,
-      2172
+      453,
+      905
     ],
     "sizeClasses": [
       {
-        "size": "1536x1086",
+        "size": "640x453",
         "count": 39
       },
       {
-        "size": "1536x1102",
+        "size": "640x459",
         "count": 1
       },
       {
-        "size": "1536x1165",
+        "size": "640x485",
         "count": 1
       },
       {
-        "size": "1536x1169",
+        "size": "640x487",
         "count": 1
       },
       {
-        "size": "1536x1311",
+        "size": "640x546",
         "count": 1
       },
       {
-        "size": "1536x2172",
+        "size": "640x905",
         "count": 17
       }
     ],
@@ -888,423 +888,423 @@
     "files": [
       {
         "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-against-wall-bath.png",
-        "bytes": 121181,
-        "sha256": "1ce5ea3e89a6a66fcf33b4e8f4621b0ed42319533ab7d6b2339ee0be983f6d1d",
-        "width": 1536,
-        "height": 2172
+        "bytes": 56377,
+        "sha256": "c1c317730c9becd2859c4e15ed7ee4f1f9a19cc4b05d62d88d02f34d29301fd5",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-dims-auto-cottage.png",
-        "bytes": 149272,
-        "sha256": "fd68e5aa503b84d6d2640863924c6fe4983c16588c3af1af9a7fdffc38c212cd",
-        "width": 1536,
-        "height": 2172
+        "bytes": 75381,
+        "sha256": "17ab7ab11cf0c61df3f9a92bf367cf7da4471d42c0c91a09bf0c04a352c76068",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-relational-studio.png",
-        "bytes": 92106,
-        "sha256": "c758bad6902fa91cff009a175fda40c55d3ca730ae2e3faf3a190e133d3cceed",
-        "width": 1536,
-        "height": 1086
+        "bytes": 37255,
+        "sha256": "b30e327abf8a2edf5f6249c187a4e16384b0a1451e97a38b2a84713c31d7a29e",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-small-office.png",
-        "bytes": 77683,
-        "sha256": "125db68e72843838bbb8df945201fe94add09e306b9a115bb58ea221325dda70",
-        "width": 1536,
-        "height": 1086
+        "bytes": 36359,
+        "sha256": "3e4d952ce0df27e22a9aabccf479a9c611fa19163f8771a9883bdf7870937a41",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-studio-1br.png",
-        "bytes": 99297,
-        "sha256": "6595debbe964ade7212dffe61fa73d01345fa469264e1572a0af4e13c7542148",
-        "width": 1536,
-        "height": 1086
+        "bytes": 45352,
+        "sha256": "1d8778765f275ff29060e8b389cb9be422b3717dcbfed0b632f1106557808b1b",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-44-47-513Z-plans__architect-two-bed-hall.png",
-        "bytes": 211546,
-        "sha256": "5139d8cba20637160c5b5b914286bd0229a4823780ebc2880a182c8011b16531",
-        "width": 1536,
-        "height": 2172
+        "bytes": 106052,
+        "sha256": "00193016d21b3d6046b777eab63b8b4e898bf1a17b540c41cfa716515a90a62c",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-against-wall-bath.png",
-        "bytes": 161891,
-        "sha256": "75e18f8b961d6e7f322fb36028f6ca72a9424d99f5930cc54ccf6a12b7ca1a7c",
-        "width": 1536,
-        "height": 2172
+        "bytes": 81937,
+        "sha256": "c04ef5ca68a15bb49c35f7a1786e3c661293ddceb5279c6a03021fd50e7180f3",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-dims-auto-cottage.png",
-        "bytes": 169668,
-        "sha256": "8b0bcfa3d8798b93f94f1ad39cb5455333ffd40f9db3504c0b6240bff9c6b110",
-        "width": 1536,
-        "height": 2172
+        "bytes": 81939,
+        "sha256": "5015631327cb9c72dba525047ad93b6ec7bbb93663cf98ee525a279ea6e4bdcb",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-relational-studio.png",
-        "bytes": 124597,
-        "sha256": "c7910012bffab910827a5a8dc64cd6db1ea6c7e03503fc98b836825af8517c74",
-        "width": 1536,
-        "height": 1086
+        "bytes": 55408,
+        "sha256": "729cb45160fb6cf1aede7d506dd9a3c7a62f1cf48cd93e5317b72a619ab3b0a8",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-small-office.png",
-        "bytes": 169203,
-        "sha256": "a26e0fb0665e51018de395e049bf7250456c6f02bee91c405fa903b1d045277c",
-        "width": 1536,
-        "height": 2172
+        "bytes": 83689,
+        "sha256": "4ed5e694d3519af1b4ca5c15f2cf862eac3754cf98048719474df795eb21a320",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-studio-1br.png",
-        "bytes": 109780,
-        "sha256": "97eec9b7970eae8b8ef15ff46d90dfdc4e8835b13fd94a18d12433ba4ac51713",
-        "width": 1536,
-        "height": 1086
+        "bytes": 49406,
+        "sha256": "c7b784cb17484a44011eca7f9ad3b6d124c380b27d96ae28c3480d15f55516bc",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-45-39-452Z-plans__solver-two-bed-hall.png",
-        "bytes": 208836,
-        "sha256": "f0f011bacdf5bb9015fe8b0cfdf9623c9e7a3c51ec953ba19bd630c94318773c",
-        "width": 1536,
-        "height": 2172
+        "bytes": 103388,
+        "sha256": "a54f1b9ba2d3dada01d648126ae59e5d79333d56f552e3682e621b7773e1f6a5",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-against-wall-bath.png",
-        "bytes": 62395,
-        "sha256": "5904481ce1478473b7dc78f15e6e89a514ad9e2cbf3268936708718da52848c8",
-        "width": 1536,
-        "height": 1086
+        "bytes": 22762,
+        "sha256": "d4044f7065f46e4237ffffa5d6347fbc68a92638c95e18427b12146ae40ec743",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-dims-auto-cottage.png",
-        "bytes": 105026,
-        "sha256": "c095556522eda455cefff7dea120f18a4ae8c6c39bc606d9d6a13fbfd2b53be1",
-        "width": 1536,
-        "height": 1086
+        "bytes": 47529,
+        "sha256": "9720435c804abc61d0468aaa6150a85ed1dda49a83d1e336e15dbf617ed1bb6f",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-relational-studio.png",
-        "bytes": 90128,
-        "sha256": "a451e783f11966b6f1d0324acc51b437f15d4c3be1b6e535015c5d5a647282dd",
-        "width": 1536,
-        "height": 1086
+        "bytes": 36069,
+        "sha256": "24541ae98f21135c4053ee6ed4d984d2136d2c7e52183a852ad1047246b398f0",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-small-office.png",
-        "bytes": 62303,
-        "sha256": "13276a5dce4221c24cc61c09d375f32fe9ba3a3c2a2206603994fa44e1031183",
-        "width": 1536,
-        "height": 1086
+        "bytes": 26738,
+        "sha256": "081891d20c04e96071f7197db8ed979bbdcf2ef04f79c44771c30c89a6238b09",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-studio-1br.png",
-        "bytes": 81180,
-        "sha256": "3352ff87f50c562ddef7cca855dfef1de65b08ca443d5234c97eb093616fed69",
-        "width": 1536,
-        "height": 1086
+        "bytes": 38650,
+        "sha256": "257ff25cc7e2606357e1220bf34047ccd917f926a772fc8a4f557d5e835e0aee",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T18-46-15-413Z-plans__architect-two-bed-hall.png",
-        "bytes": 88798,
-        "sha256": "cc04446e239e319597c408f8f70aff65373308ad8d4a8535f1f5e6ddf815bc18",
-        "width": 1536,
-        "height": 1086
+        "bytes": 30845,
+        "sha256": "3c35a10d5d28cac35a1cda6beab6d88914400decf4301fd2c009468e3c416118",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-against-wall-bath.png",
-        "bytes": 89543,
-        "sha256": "430211f234fdd717444a28469101f1a05f38c1931720f4f3a3a4b0146d6f3aca",
-        "width": 1536,
-        "height": 1086
+        "bytes": 38188,
+        "sha256": "fae28d2c9dae63ac3e4530fa041707bd44d47e59332b77248c7d4ae38ffaaf66",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-dims-auto-cottage.png",
-        "bytes": 108420,
-        "sha256": "35cc5b0cde4b7f84079a30c91c9dc8e6f850f85ee8768ce3afbb93603d421ecb",
-        "width": 1536,
-        "height": 1086
+        "bytes": 48463,
+        "sha256": "5519092e9a63004bf4178cf683f2186c5b555e70dc5995790d86d3c997e6646c",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-relational-studio.png",
-        "bytes": 130456,
-        "sha256": "f8566c3c2fdc056cf459b17f26bec8c9101dc516e12bc9b04619a0cc0db20f70",
-        "width": 1536,
-        "height": 2172
+        "bytes": 60879,
+        "sha256": "f94ce3450c43e3489181133b7e2cc1a1a1bc3ed573a97059c8793234a80ada55",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-small-office.png",
-        "bytes": 99371,
-        "sha256": "1a8f385ad16cea9bc45a3a3718fc682e1c1edcbe0bf90ae5385beb06931b1c8e",
-        "width": 1536,
-        "height": 1102
+        "bytes": 40149,
+        "sha256": "dc60e239a769f2c30d8c373cfda0bf59688fe761a2c5b614aad5a4afb7432543",
+        "width": 640,
+        "height": 459
       },
       {
         "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-studio-1br.png",
-        "bytes": 82095,
-        "sha256": "c96870b1e8637404eec20a077cb9bf64b408e4c1b9c1c79c78edd5e38285cec4",
-        "width": 1536,
-        "height": 1086
+        "bytes": 35585,
+        "sha256": "2e1a5df0e2098ad1b1e31790fb1c62d708144fad5eddafffb3a86b857ceb4b70",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-08-52-685Z-plans__architect-two-bed-hall.png",
-        "bytes": 109601,
-        "sha256": "0d9d4d7854567dfe53b556fb6f51e1e8385aaf778230bc2a5c6fed9052899d42",
-        "width": 1536,
-        "height": 1086
+        "bytes": 40128,
+        "sha256": "72be61651029d659166475e7b72909a19a3f099960cb8e3d1cc1e0589f52444c",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-accessible-flat.png",
-        "bytes": 69360,
-        "sha256": "beb7497f5fb7fc89e7f1d2267053a2dbb56d3cc9e099aba3d85737f3c4da20f0",
-        "width": 1536,
-        "height": 1086
+        "bytes": 28248,
+        "sha256": "1755bb58ba0c1f64de0951751e4bfe7ba9a7375e459c2031da799aa145e5661e",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-bungalow.png",
-        "bytes": 153678,
-        "sha256": "c1b73b36814310306e7858e8c5bf840ebe623741d002da97a73ea5dd7a782985",
-        "width": 1536,
-        "height": 1165
+        "bytes": 67893,
+        "sha256": "5bd84598e44ac8fcdeaa09fbd52a85f33c600722d2017905d2d3f31b0f5569bd",
+        "width": 640,
+        "height": 485
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-galley-kitchen.png",
-        "bytes": 99496,
-        "sha256": "48e1cfaf8500b9a667fd748deb3ce8fbd2addf5817416365f0aee2e61bb209e8",
-        "width": 1536,
-        "height": 1086
+        "bytes": 40677,
+        "sha256": "3fd33f83ac802e943f0760b0699f1ff78436148aeccfc347c9265a1413008733",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-l-shaped-flat.png",
-        "bytes": 67395,
-        "sha256": "b6b4aac7e63d02aa2f902dbcb04daa72a9659fa7fead0dcee86333f6650d1f96",
-        "width": 1536,
-        "height": 1086
+        "bytes": 28034,
+        "sha256": "051863a74b03ea6bc164a63a43433fbdbd96a71c04c5bce6f1292997e86651db",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-open-plan-loft.png",
-        "bytes": 74870,
-        "sha256": "8af80f5182be23f2420213e7ab147e81d6ae1413037966cb84033b7c029ab424",
-        "width": 1536,
-        "height": 1086
+        "bytes": 26076,
+        "sha256": "d6ba3f026689454b3b9d830f46d23f66e0854d36de9d07b9e204664d279befe6",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-reception-suite.png",
-        "bytes": 100079,
-        "sha256": "65544b39c766bda5c7bb68309747b5bfc20f72ba6703518dc531affcbc932b0e",
-        "width": 1536,
-        "height": 1086
+        "bytes": 46303,
+        "sha256": "fd2fb633e3e94cde16020af5fc6273c7979ced4956c0f941ddde80a37dd97d74",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-scripting-units.png",
-        "bytes": 120954,
-        "sha256": "37cf43b28a4b96efa824d2f1022a2e9e13996fd9b19782bba0315d0f1a041601",
-        "width": 1536,
-        "height": 1086
+        "bytes": 49589,
+        "sha256": "7759d23be0183bcfcc2fe3d4d399e13e659797df9b3c5245073e64aa02d80ca5",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-bedrooms.png",
-        "bytes": 107212,
-        "sha256": "b86bc42b715795a2532404d5b965190ac156e88033d6a0f2cb736ba8b61745a1",
-        "width": 1536,
-        "height": 1086
+        "bytes": 45173,
+        "sha256": "904039c9dbbbde7c1ea2e6f5a88cb8f0a626911ee522ef93a6ab7dd98e3e1bd6",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-kitchen-flat.png",
-        "bytes": 67098,
-        "sha256": "87fc91681c4444b29f2b26055828a29e43d70648b73003587e4c39f4f8204d6c",
-        "width": 1536,
-        "height": 1086
+        "bytes": 27897,
+        "sha256": "cbf6b68544d78dee5513dd3c7ba51a924be7d2ff629c0637bc44d0702faba723",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-office-mix.png",
-        "bytes": 68566,
-        "sha256": "0b02d105765ab0f0adbc3d3466a72385ca9352f3784bcbfaed4f8a0a8c7f76db",
-        "width": 1536,
-        "height": 1086
+        "bytes": 29030,
+        "sha256": "e3565018820a96bd2678e793a0213f3461b8bdf8c28eab03691fcd63dec3a2f9",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-sized-wet-room.png",
-        "bytes": 82783,
-        "sha256": "db5a7dfdda44cf13a17ff50e5087d27a8229f9984378b405d9ce602da58489c4",
-        "width": 1536,
-        "height": 1086
+        "bytes": 38978,
+        "sha256": "ca9080201f1ee88362b73b782d5806b48ce9a5ec2857fc7b32e8d1261d087bb6",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-strip-attach-clean.png",
-        "bytes": 109974,
-        "sha256": "acd82fbdcf88c24d805be9785cd6c3a2a668729a9a33de7315de14b8cc1e4b13",
-        "width": 1536,
-        "height": 1086
+        "bytes": 45069,
+        "sha256": "3981c1af5a4e6b395c460ad0c4b09075f61406a2badb525fa4e3a956f38e1813",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-strip-corridor.png",
-        "bytes": 93177,
-        "sha256": "e7fd01c0206fd0209769159ef760485afbc118aa9dcaa4f733b15af37442abb4",
-        "width": 1536,
-        "height": 1086
+        "bytes": 38763,
+        "sha256": "af85a17618f67ed0736d10b09b66746c1458959cacdd0def8730feb0595b7ac8",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-three-bed-2bath.png",
-        "bytes": 94059,
-        "sha256": "19fbeede2bf50861726945f3a50f6c9e653ed85435e0d81f2c5cfc6693950ad8",
-        "width": 1536,
-        "height": 1086
+        "bytes": 40116,
+        "sha256": "942b6f2c520db4828f6a1698bdbc07896e8b79ecb5f9d9e4d6c63f0fbc7ab6fe",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-two-bath-flat.png",
-        "bytes": 155674,
-        "sha256": "15f327d21c1eb8972e2b9378aa33f37509e88ad2e3abbbfed283ad985e326690",
-        "width": 1536,
-        "height": 1169
+        "bytes": 65757,
+        "sha256": "7ec6d941ce1c0720b34a60b6272efa3d015efabd9ba05bde414a92aa3f9920cd",
+        "width": 640,
+        "height": 487
       },
       {
         "name": "designer-loop-2026-09-04T19-18-21-319Z-plans__architect-two-bed-hall.png",
-        "bytes": 97625,
-        "sha256": "f6b36fc7bb9398791a0b20b93d2059b3dc7c09640fe3ea2b4e295789c8f0ea72",
-        "width": 1536,
-        "height": 1086
+        "bytes": 32716,
+        "sha256": "cd9bcf7184bc33f4612917cdac6ec11692496e097e63ce77749ef0f041486d01",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-accessible-flat.png",
-        "bytes": 127128,
-        "sha256": "0776a5245dd830bfb70c30044063ac33b2e6b4d83e7248b5ab4933f2a2dd9d59",
-        "width": 1536,
-        "height": 1311
+        "bytes": 72342,
+        "sha256": "a466a8814e3dbd3156166e64baf0788c708ab7e4f25ba41d7c8acf1042b6d420",
+        "width": 640,
+        "height": 546
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-bungalow.png",
-        "bytes": 214784,
-        "sha256": "c3ab9039af3c4f7268f90487eef074ac7718cbbec4b4f3d5bdb9cfe91c343a4f",
-        "width": 1536,
-        "height": 2172
+        "bytes": 107968,
+        "sha256": "7b12df3af974c38367a0f84f3f3e4b59e41e9e76aa3c5735e1d6b5453564d925",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-galley-kitchen.png",
-        "bytes": 128439,
-        "sha256": "005da3569817f365fd3b15153ce97ed5aae9d5af8606da5594a67b50ab45d15f",
-        "width": 1536,
-        "height": 1086
+        "bytes": 56826,
+        "sha256": "b4106aabcef69946c88fd8127048131a2d61aec4e5d91b306d04a6818426d730",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-l-shaped-flat.png",
-        "bytes": 115667,
-        "sha256": "3886f8d4b413b60fd43b6e7eda59c50fb2d99b74cc6bc0b41bc88137de4f76c1",
-        "width": 1536,
-        "height": 1086
+        "bytes": 52724,
+        "sha256": "bcb910ddc0eaff141a0b92a2daa1d6a7d492b42eaf6d0ed328c8d86a5729ea1f",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-open-plan-loft.png",
-        "bytes": 158331,
-        "sha256": "14ebc235e4e2af46d79dc8c65e7a5fd8cc4fa596826c575e3f83162f8cdbaab4",
-        "width": 1536,
-        "height": 2172
+        "bytes": 84152,
+        "sha256": "f8da536c329970d8fa5bc4939c4d44767124f5921b62e45df87d89f9c389002c",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-reception-suite.png",
-        "bytes": 126352,
-        "sha256": "0a7ba5e7c135d2ddc5cb08ee70977c6ac327c12e9b56cff8a74faadbf92bfc6f",
-        "width": 1536,
-        "height": 1086
+        "bytes": 58308,
+        "sha256": "779541d7c99c4b63ee791de781e85ada758310b8634e33554c66c55fc0091e77",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-scripting-units.png",
-        "bytes": 193384,
-        "sha256": "d5390da1ad1b43b034d39a06838586f07624424ad581a5d500783741ea121811",
-        "width": 1536,
-        "height": 2172
+        "bytes": 96970,
+        "sha256": "217725be3a6062cb967d4376107482845e6f6277a19ddcaae84a1ee511a5597b",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-bedrooms.png",
-        "bytes": 204783,
-        "sha256": "1f219534672af5ce5bd037e4d1c7fdaddd941f4e41689ea16f0190310f8276a7",
-        "width": 1536,
-        "height": 2172
+        "bytes": 99738,
+        "sha256": "153e0431baef8e0b77744c143ade75fc565990a22b5f778c06125e5aa731baec",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-kitchen-flat.png",
-        "bytes": 111639,
-        "sha256": "40cc8d21605991acd7ec8074668c664e36ad48942d2628551da86f9545fda033",
-        "width": 1536,
-        "height": 1086
+        "bytes": 51162,
+        "sha256": "c65bd4af13b5e059e049f9d48bb2168f60b6b98cfebb4c5874b13d261dbabecc",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-office-mix.png",
-        "bytes": 90009,
-        "sha256": "7f48e588dc4418af9888b720d1395654eebb37334ad6df8ae80bbc35ee4e0dab",
-        "width": 1536,
-        "height": 1086
+        "bytes": 33924,
+        "sha256": "6f005bc0c3096738fb210ede48590ecd384f6b4f377796239fbfca52aaffc152",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-sized-wet-room.png",
-        "bytes": 171184,
-        "sha256": "1117e2ef007532f2912bb7b94722a6158aad8c4f534d4f356940b71997c95aa3",
-        "width": 1536,
-        "height": 2172
+        "bytes": 82831,
+        "sha256": "87cb09761b7c63bcba9c1973a043893ce65872cac8398261103c846461a9ffbb",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-strip-attach-clean.png",
-        "bytes": 129239,
-        "sha256": "31244773ca542a13a383ec8d36dcc155ab4a3a698ed8b3738e9ab6402b7c126a",
-        "width": 1536,
-        "height": 1086
+        "bytes": 55464,
+        "sha256": "05580cba8699d2fc09c0e142e2e347bd6aed0d2385fe68aec2f36b186d21827d",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-strip-corridor.png",
-        "bytes": 319542,
-        "sha256": "71ed08190924696857a64960febf14f3155d51eabc1838e9456c55e9b276b5d5",
-        "width": 1536,
-        "height": 2172
+        "bytes": 122387,
+        "sha256": "628ea349b1ec9e317a3b0705f3401aadc3f169826bcd7b1829ce9cd2fa08d268",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-three-bed-2bath.png",
-        "bytes": 262761,
-        "sha256": "1094b0586456b0a26f4686c423a053edad9fab2515d75ca71ca8c62c2487d71d",
-        "width": 1536,
-        "height": 2172
+        "bytes": 131074,
+        "sha256": "978f4769442bd604ea137926a0630d1e9ed2c738f3759d401a126ac80d79ba08",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-two-bath-flat.png",
-        "bytes": 147062,
-        "sha256": "fb32b5a6da59a9f0cf60cb253e99e9145482524fab24806697ecb677b8e903a2",
-        "width": 1536,
-        "height": 1086
+        "bytes": 63550,
+        "sha256": "8e6a6ee37f91ee0c059cab48fa34800d6cc633d8b4a1ff8683e16fd29af1aac0",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T19-18-23-848Z-plans__solver-two-bed-hall.png",
-        "bytes": 208836,
-        "sha256": "f0f011bacdf5bb9015fe8b0cfdf9623c9e7a3c51ec953ba19bd630c94318773c",
-        "width": 1536,
-        "height": 2172
+        "bytes": 103388,
+        "sha256": "a54f1b9ba2d3dada01d648126ae59e5d79333d56f552e3682e621b7773e1f6a5",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-against-wall-bath.png",
-        "bytes": 99079,
-        "sha256": "3c43d24bc3ad80ab022ea6eeab0db83464c73e0569af34f4bb8d39907af1619c",
-        "width": 1536,
-        "height": 1086
+        "bytes": 44824,
+        "sha256": "b20c599253fc39029363c11cb695fb576077c941ac1996e037af9e90b9cdc8e9",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-dims-auto-cottage.png",
-        "bytes": 91024,
-        "sha256": "12ee7122c76d97ad11af570ab1f5bdca9553264efd4edc4d77098825065cb91d",
-        "width": 1536,
-        "height": 1086
+        "bytes": 43649,
+        "sha256": "9cb2ebe7ede296adf4d5040ac4d71d45e3152fbf71c67dd77ebdecc8c2672487",
+        "width": 640,
+        "height": 453
       },
       {
         "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-relational-studio.png",
-        "bytes": 164601,
-        "sha256": "0c34ba49f499a589e68e216e580b9a16bce5fffc7c03fabf7045dec4ee4eea70",
-        "width": 1536,
-        "height": 2172
+        "bytes": 84634,
+        "sha256": "e7cf43d896a3f3bb674f89123a0b692690f0afca8f06e25768a0a9872f873ba0",
+        "width": 640,
+        "height": 905
       },
       {
         "name": "designer-loop-2026-09-04T21-23-19-809Z-plans__architect-small-office.png",
-        "bytes": 101577,
-        "sha256": "acffadbea124589b438b214668222bef32cf761488c86c93149e8ef93641935f",
-        "width": 1536,
-        "height": 1086
+        "bytes": 47818,
+        "sha256": "19fbd19a2aaf3c0a88a8e96775960f3d8644df1bfd2378edb6811f810db00d30",
+        "width": 640,
+        "height": 453
       }
     ]
   },

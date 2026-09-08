@@ -19,7 +19,7 @@
  * Requires `ffprobe` on PATH for raster/video measurement. Node builtins otherwise.
  */
 
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -318,6 +318,53 @@ function stage(srcAbs, dstAbs) {
   const bytes = fs.statSync(dstAbs).size;
   stats.bytes += bytes;
   return { bytes, sha256: srcHash, copied: !fresh };
+}
+
+/**
+ * The wall tiles are DOWNSCALED on the way in, and that is not an optimisation
+ * detail -- it is the difference between a film that renders and one that does
+ * not.
+ *
+ * The sixty tiles are 1536 wide and up to 2172 tall: about 3.3 megapixels each,
+ * 200 megapixels across the set. They are mounted together (the wall is one
+ * world object) and every one registers its own delayRender, so at full size a
+ * still render died with "delayRender was called but not cleared after
+ * 118000ms" on a single tile while the rest were still decoding.
+ *
+ * WALL_TILE_W is 640 because the widest shot in the film puts a tile at roughly
+ * 170 screen pixels in the 1920 master -- 640 is nearly four times what the
+ * frame can show, which is headroom, not fidelity lost. It is also why this is
+ * legitimate rather than a shortcut: the source library's rule for these rasters
+ * is MONTAGE ONLY, never present one as a showcase plan, so no frame of this
+ * film ever asks a tile for detail it no longer has. Nothing is cropped; the
+ * aspect ratio of every tile is preserved, which is the part law 2 cares about.
+ */
+const WALL_TILE_W = 640;
+
+function stageWallTile(srcAbs, dstAbs) {
+  if (!fs.existsSync(srcAbs)) die(`missing in the source library: ${slash(srcAbs)}`);
+  if (!FORCE && fs.existsSync(dstAbs)) {
+    const w = measureRaster(dstAbs).width;
+    if (w === WALL_TILE_W) {
+      stats.skipped += 1;
+      const bytes = fs.statSync(dstAbs).size;
+      stats.bytes += bytes;
+      return { bytes, sha256: sha256(dstAbs) };
+    }
+  }
+  fs.mkdirSync(path.dirname(dstAbs), { recursive: true });
+  // -1 keeps the aspect ratio and rounds to an even height; the tiles are
+  // ragged by design and a forced height would letterbox or crop them.
+  const r = spawnSync(
+    "ffmpeg",
+    ["-v", "error", "-y", "-i", srcAbs, "-vf", `scale=${WALL_TILE_W}:-1:flags=lanczos`, dstAbs],
+    { encoding: "utf8" }
+  );
+  if (r.status !== 0) die(`ffmpeg failed on ${slash(srcAbs)}: ${(r.stderr || "").trim().split(String.fromCharCode(10))[0]}`);
+  stats.copied += 1;
+  const bytes = fs.statSync(dstAbs).size;
+  stats.bytes += bytes;
+  return { bytes, sha256: sha256(dstAbs) };
 }
 
 function stageRow({ id, role, src, destRel }) {
@@ -706,7 +753,7 @@ if (wallNames.length === 0) die(`no PNGs under ${slash(wallSrcDir)}`);
 const wallBefore = { copied: stats.copied, skipped: stats.skipped, bytes: stats.bytes };
 const wallFiles = wallNames.map((name) => {
   const dstAbs = path.join(PUBLIC_DIR, "wall", name);
-  const { bytes, sha256: hash } = stage(path.join(wallSrcDir, name), dstAbs);
+  const { bytes, sha256: hash } = stageWallTile(path.join(wallSrcDir, name), dstAbs);
   const m = measureRaster(dstAbs);
   return { name, bytes, sha256: hash, width: m.width, height: m.height };
 });
