@@ -184,6 +184,34 @@ them without blocking work, and the film still cannot ship with one on screen. T
 the `Placeholder` component's own body is likewise never registration-gated, for the same
 reason.
 
+## D9c. `src/stations.ts` owns every second. The script owns every word.
+
+A vo row is `{ id, text }` and carries no timing at all. `leadInSec` and `tailSec` live in
+`src/stations.ts` and nowhere else.
+
+They were briefly duplicated into `script.json` and were removed on `core`'s call, which is
+right: **`leadInSec` does double duty.** It is simultaneously how long the camera takes to
+travel to this station and how long the voice waits before starting — the same instant,
+which is why the derivation is one expression, `max(minSec, voSec + leadInSec + tailSec)`.
+Two copies of one number are two things that can disagree, and CLAUDE.md law 3 exists
+precisely to stop timing being typed in more than one place. Nothing read the script's copy
+(`generate-vo.mjs` defaulted it to `0` and only logged it; `generate-captions.mjs` reads the
+*station's*), so removing it changed no behaviour.
+
+## D9d. The narration is running at 183 wpm against copy written for 140.
+
+The lines were written to a calm documentary pace: 100 words, ~42.9 s of speech inside an
+~85 s film, so that roughly half the running time is camera and silence. The measured takes
+in `src/data/vo.json` total **32.8 s — about 183 wpm**, with individual stations as fast as
+`mark` at 249 and `pair` and `note` at ~220.
+
+That is not a copy problem and no line was changed for it: the film is 88.87 s and every
+station except `note` is floor-bound, so the extra 10 s simply becomes more air. It is
+recorded because it is a **voice setting, not a script setting**, and because there is
+headroom to slow it — `note`, the only voice-bound station, runs 8.87 s against a 14 s
+`maxSec`. If the delivery ever reads as brisk against the pull-back, the dial is the TTS
+rate, and nobody should reach for the words instead.
+
 ## D10. Two standing rules the first film did not have to state.
 
 - **No bare dollar price on screen.** USD rendered on a `.uk` surface is DMCCA

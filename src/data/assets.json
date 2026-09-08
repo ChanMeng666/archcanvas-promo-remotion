@@ -1,5 +1,5 @@
 {
-  "$comment": "WRITTEN BY scripts/sync-assets.mjs — NEVER HAND-EDIT.\n\nThis is the film's ledger: the record of exactly which bytes it was cut from. Every row\nnames a file staged into public/ (gitignored, regenerable) out of the first film's repo,\nwith its size, sha256 and machine-measured native dimensions. public/ is not tracked;\nthis file is, so a diff here is the reviewable record of a change in the raw material.\n\nNothing on screen is mocked up (CLAUDE.md law 2). If a drawing, rendering or clip is not\nin this ledger, it did not come out of the product and it does not belong in the film.\n\nRegenerate with `npm run sync:assets`. Verify with `npm run verify:assets` — Remotion\nfails SOFTLY on a missing staticFile(), so an unverified render can ship with a hole in it.\n\nEvery row carries `provenance`: \"source-library\" means the bytes came out of\n../archcanvas-promo-video and a sync restores them; \"generated\" means a script in this\nrepo made them (the ElevenLabs cues), whose durable copy lives at repo-root audio/.\n\nShape: `assets` are individual files under public/<src>. `wall` groups 60 montage tiles\nunder public/wall/<files[].name> (same guarantees, compact form). `sources` are raw inputs\nstaged OUTSIDE public/, relative to the repo root — they are not loadable with staticFile().",
+  "$comment": "WRITTEN BY scripts/sync-assets.mjs — NEVER HAND-EDIT.\n\nThis is the film's ledger: the record of exactly which bytes it was cut from. Every row\nnames a file staged into public/ (gitignored, regenerable) out of the first film's repo,\nwith its size, sha256 and machine-measured native dimensions. public/ is not tracked;\nthis file is, so a diff here is the reviewable record of a change in the raw material.\n\nNothing on screen is mocked up (CLAUDE.md law 2). If a drawing, rendering or clip is not\nin this ledger, it did not come out of the product and it does not belong in the film.\n\nRegenerate with `npm run sync:assets`. Verify with `npm run verify:assets` — Remotion\nfails SOFTLY on a missing staticFile(), so an unverified render can ship with a hole in it.\n\nEvery row carries `provenance`. \"source-library\" means the bytes came out of\n../archcanvas-promo-video and a sync restores them. \"generated\" means a script in this repo\nmade them (the ElevenLabs cues and voiceover). \"cut\" means scripts/cut-clips.mjs cut them\nfrom the raw OBS takes, and those rows carry a `cut` block naming the take, the in-point and\nthe crop. Only source-library rows can be re-synced; the rest are unrecoverable if lost, and\nsync-assets refuses to write a ledger that forgets one.\n\nShape: `assets` are individual files under public/<src>. `wall` groups 60 montage tiles\nunder public/wall/<files[].name> (same guarantees, compact form). `sources` are raw inputs\nstaged OUTSIDE public/, relative to the repo root — they are not loadable with staticFile().",
   "generatedBy": "scripts/sync-assets.mjs",
   "sourceRepo": "D:/github_repository/archcanvas-promo-video",
   "maxUpscale": {
@@ -83,6 +83,78 @@
         "maxSafeDisplayWidth": 2679
       },
       {
+        "id": "lineage-instruction",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "lineage-morph",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "lineage-room-verbs",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "lineage-shrink",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "lineage-timeline",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "note-pin",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "note-pin-card",
+        "role": "still",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "pair-rendering",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
+        "id": "plan-fit",
+        "role": "clip",
+        "nativeWidth": 1828,
+        "nativeHeight": 1016,
+        "upscaleAtTargetWidth": 1.05,
+        "maxSafeDisplayWidth": 2742
+      },
+      {
         "id": "render-family-house-aerial",
         "role": "render",
         "nativeWidth": 1536,
@@ -117,8 +189,8 @@
     ]
   },
   "totals": {
-    "files": 99,
-    "bytes": 21560458,
+    "files": 87,
+    "bytes": 22587432,
     "byRole": {
       "plan": {
         "files": 4,
@@ -129,16 +201,20 @@
         "bytes": 784564
       },
       "clip": {
-        "files": 8,
-        "bytes": 4807333
+        "files": 16,
+        "bytes": 12032664
       },
       "brand": {
         "files": 2,
         "bytes": 15284
       },
       "audio": {
-        "files": 21,
-        "bytes": 3435920
+        "files": 1,
+        "bytes": 1801354
+      },
+      "still": {
+        "files": 1,
+        "bytes": 164179
       },
       "wall": {
         "files": 60,
@@ -449,294 +525,319 @@
       "id": "bgm",
       "src": "audio/bgm.mp3",
       "role": "audio",
-      "provenance": "source-library",
-      "bytes": 2209870,
-      "sha256": "608466ff68ca024c6d0765f4fdad31f3c93a6a1a7e6a6f907b0d4b0ee1ddcd95",
-      "width": null,
-      "height": null,
-      "durationSec": 92,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/bgm.mp3"
-    },
-    {
-      "id": "sfx-instrument",
-      "src": "audio/sfx-instrument.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 15090,
-      "sha256": "ace3ec778bd83de54f025a62991a7ea9e105c6ea4cde3135fa5736f263f3d214",
-      "width": null,
-      "height": null,
-      "durationSec": 0.88,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-instrument.mp3"
-    },
-    {
-      "id": "sfx-paper-settle",
-      "src": "audio/sfx-paper-settle.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 24703,
-      "sha256": "af4ba18d7c5d7181960419341fcb88b25eb39ac8057532e30ba9ecdf0ada7672",
-      "width": null,
-      "height": null,
-      "durationSec": 1.48,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-paper-settle.mp3"
-    },
-    {
-      "id": "sfx-paper-sweep",
-      "src": "audio/sfx-paper-sweep.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 15090,
-      "sha256": "9c6195b7c0758f702114fb9d87a6542ddb0faf372d6a3b99c2d472ab20579e16",
-      "width": null,
-      "height": null,
-      "durationSec": 0.88,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-paper-sweep.mp3"
-    },
-    {
-      "id": "sfx-pencil-line",
-      "src": "audio/sfx-pencil-line.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 26793,
-      "sha256": "101f461eaaa1a4ac89b354e1250dc6f2c11618aad838ed2d2a65a6736c00253d",
-      "width": null,
-      "height": null,
-      "durationSec": 1.6,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-pencil-line.mp3"
-    },
-    {
-      "id": "sfx-stamp",
-      "src": "audio/sfx-stamp.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 17180,
-      "sha256": "ca4f263975a98d29dee65b5be5cbd24463c445c657c518fc415530f8cb480ead",
-      "width": null,
-      "height": null,
-      "durationSec": 1,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-stamp.mp3"
-    },
-    {
-      "id": "sfx-tick",
-      "src": "audio/sfx-tick.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 8821,
-      "sha256": "67dc64ba12a414f22f3e9267d6f8deb167ec212487e7501bab336011eb601e00",
-      "width": null,
-      "height": null,
-      "durationSec": 0.48,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-tick.mp3"
-    },
-    {
-      "id": "sfx-ui-click",
-      "src": "audio/sfx-ui-click.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 10493,
-      "sha256": "f3e3fdfedce9bbdaf00d702d311e2cdb824026a5d923862b36d8403db71797f2",
-      "width": null,
-      "height": null,
-      "durationSec": 0.6,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-ui-click.mp3"
-    },
-    {
-      "id": "sfx-warm-swell",
-      "src": "audio/sfx-warm-swell.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 41839,
-      "sha256": "e3028e8f4cf11a78cefbf4124afc0f3196f6bac7a0b244b93245a0139db57791",
-      "width": null,
-      "height": null,
-      "durationSec": 2.56,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/sfx-warm-swell.mp3"
-    },
-    {
-      "id": "sfx-detent",
-      "src": "audio/sfx-detent.mp3",
-      "role": "audio",
       "provenance": "generated",
-      "bytes": 8821,
-      "sha256": "eb45118db15a51dacaaaf4b609b281b68c692dcbb1efad9392a71d43fed4aa6a",
+      "bytes": 1801354,
+      "sha256": "6fdcbf3e2f8d52a5399001cde029e26605d8db42f954808c577ae5f8a8025815",
       "width": null,
       "height": null,
-      "durationSec": 0.48,
+      "durationSec": 75,
       "fps": null,
       "resolutionBound": false,
       "from": null
     },
     {
-      "id": "sfx-final-settle",
-      "src": "audio/sfx-final-settle.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 20106,
-      "sha256": "63f64dc9a07498eb9d924670c7dbf6eac0b4bb751aaffd19505f2065da44cd8e",
-      "width": null,
-      "height": null,
-      "durationSec": 1.2,
-      "fps": null,
-      "resolutionBound": false,
+      "id": "lineage-instruction",
+      "src": "clips/lineage-instruction.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 820213,
+      "sha256": "ece0b81c9be7dfaa791155eb980fa3fb9f63f2888a7ca5cc868eb809c3327998",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 60,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1800,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "lineage",
+        "takeFile": "2026-09-08 02-10-39.mp4",
+        "startSec": 347,
+        "endSec": 407,
+        "sourceWindow": [
+          350,
+          404
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c07-edit-type"
+      },
       "from": null
     },
     {
-      "id": "sfx-paper-rush",
-      "src": "audio/sfx-paper-rush.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 23031,
-      "sha256": "27169c680110081b683fe1790c487cd79beae4c0c07109abef2c224edf22f5ff",
-      "width": null,
-      "height": null,
-      "durationSec": 1.36,
-      "fps": null,
-      "resolutionBound": false,
+      "id": "lineage-morph",
+      "src": "clips/lineage-morph.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 784389,
+      "sha256": "1268af0740786c97c94e135432c89a95ed9a89af50a4c622fdddbf88e7c6566f",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 56,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1680,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "lineage",
+        "takeFile": "2026-09-08 02-10-39.mp4",
+        "startSec": 397,
+        "endSec": 453,
+        "sourceWindow": [
+          400,
+          450
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c08-morph"
+      },
       "from": null
     },
     {
-      "id": "sfx-room-air",
-      "src": "audio/sfx-room-air.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 481115,
-      "sha256": "fc2459888ae0454f730648e62e711e634b13e484e9d059629adbf344914a06d6",
-      "width": null,
-      "height": null,
+      "id": "lineage-room-verbs",
+      "src": "clips/lineage-room-verbs.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 408096,
+      "sha256": "2ffc3c6c23fb19eb1919922253a60cdb86ad94f3ad71076d7fd0e9c485738d22",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 28,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 840,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "lineage",
+        "takeFile": "2026-09-08 02-21-10.mp4",
+        "startSec": 5,
+        "endSec": 33,
+        "sourceWindow": [
+          8,
+          30
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c10-select-room"
+      },
+      "from": null
+    },
+    {
+      "id": "lineage-shrink",
+      "src": "clips/lineage-shrink.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 622754,
+      "sha256": "2f4cad2b5486e1603d06d602933834fae21dace64d241ca9c93f480b09750673",
+      "width": 1828,
+      "height": 1016,
       "durationSec": 30,
-      "fps": null,
-      "resolutionBound": false,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 900,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "lineage",
+        "takeFile": "2026-09-08 02-21-10.mp4",
+        "startSec": 81,
+        "endSec": 111,
+        "sourceWindow": [
+          84,
+          108
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c11-shrink-result"
+      },
       "from": null
     },
     {
-      "id": "vo-drawing",
-      "src": "audio/vo-drawing.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 64173,
-      "sha256": "81f99fd8c9f5c2c6492de921b5ef22e9d0523be8fa133e4fe64f8fa1770ba6a0",
-      "width": null,
-      "height": null,
-      "durationSec": 3.94475,
-      "fps": null,
-      "resolutionBound": false,
+      "id": "lineage-timeline",
+      "src": "clips/lineage-timeline.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 856393,
+      "sha256": "99e7479073f62528b9ba845f40d2a836e2054efb7e2edd5330b21fc4d515e4c9",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 50,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1500,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "lineage",
+        "takeFile": "2026-09-08 02-21-10.mp4",
+        "startSec": 169,
+        "endSec": 219,
+        "sourceWindow": [
+          172,
+          216
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c13-timeline"
+      },
       "from": null
     },
     {
-      "id": "vo-facts",
-      "src": "audio/vo-facts.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 71469,
-      "sha256": "c260b644c7f544cdfec4fdfb3aff3f3825964a2e26565c182357d3e0027f94f9",
-      "width": null,
-      "height": null,
-      "durationSec": 4.413875,
-      "fps": null,
-      "resolutionBound": false,
+      "id": "note-pin",
+      "src": "clips/note-pin.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 712728,
+      "sha256": "1957c68fe90f4d2435a328c9af130071e979f5b09394adcab2f129eef50caff1",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 50,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1500,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "note",
+        "takeFile": "2026-09-08 02-10-39.mp4",
+        "startSec": 259,
+        "endSec": 309,
+        "sourceWindow": [
+          262,
+          306
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c06-review-pins"
+      },
       "from": null
     },
     {
-      "id": "vo-interior",
-      "src": "audio/vo-interior.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 87213,
-      "sha256": "f499e64facd7762f77d25b2c74f0a822fb57d9aaac7c65dc89945a0d8af60e9a",
-      "width": null,
-      "height": null,
-      "durationSec": 5.380625,
-      "fps": null,
-      "resolutionBound": false,
+      "id": "pair-rendering",
+      "src": "clips/pair-rendering.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 2575369,
+      "sha256": "5d0f25dccbee8bf3e56d2c881b0c6bfed37ac0a5e60de8b908238c084aca4611",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 43,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1290,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "pair",
+        "takeFile": "2026-09-08 02-21-10.mp4",
+        "startSec": 285,
+        "endSec": 328,
+        "sourceWindow": [
+          288,
+          325
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c15-render-full"
+      },
       "from": null
     },
     {
-      "id": "vo-lineage",
-      "src": "audio/vo-lineage.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 79917,
-      "sha256": "12366557882ba8109a80ffc530a31b1e98f5e99a9163f7e830c805a4ccf44ecf",
-      "width": null,
-      "height": null,
-      "durationSec": 4.930333,
-      "fps": null,
-      "resolutionBound": false,
+      "id": "plan-fit",
+      "src": "clips/plan-fit.mp4",
+      "role": "clip",
+      "provenance": "cut",
+      "bytes": 445389,
+      "sha256": "7608b6f71caeee0540fe08997a75781ee645c41d74c1cfe423fb5bf84fdb29ed",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": 36,
+      "fps": 30,
+      "codec": "h264",
+      "frames": 1080,
+      "hasAudioStream": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "plan",
+        "takeFile": "2026-09-08 02-10-39.mp4",
+        "startSec": 167,
+        "endSec": 203,
+        "sourceWindow": [
+          170,
+          200
+        ],
+        "handleSec": 3,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        },
+        "supersedes": "c05-fit"
+      },
       "from": null
     },
     {
-      "id": "vo-mark",
-      "src": "audio/vo-mark.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 35757,
-      "sha256": "4409d542d3be7ba02763b007702715fe1165b7d27edd7d88bb2f463acfe54cee",
-      "width": null,
-      "height": null,
-      "durationSec": 2.172646,
+      "id": "note-pin-card",
+      "src": "stills/note-pin-card.png",
+      "role": "still",
+      "provenance": "cut",
+      "bytes": 164179,
+      "sha256": "fb1d06992c17400a19901df59da7828b4d9772cbb0fdac899f7dda035fe94d67",
+      "width": 1828,
+      "height": 1016,
+      "durationSec": null,
       "fps": null,
-      "resolutionBound": false,
-      "from": null
-    },
-    {
-      "id": "vo-note",
-      "src": "audio/vo-note.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 66093,
-      "sha256": "f407a3197999b3cdf7c9aac7152a3fc3b0294b6996b5dd735451ec2c3731b29e",
-      "width": null,
-      "height": null,
-      "durationSec": 4.065271,
-      "fps": null,
-      "resolutionBound": false,
-      "from": null
-    },
-    {
-      "id": "vo-pair",
-      "src": "audio/vo-pair.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 70701,
-      "sha256": "23b24604b1591be2d4eb78c4738a566604e22813eaae7c8b1009279ddf66d275",
-      "width": null,
-      "height": null,
-      "durationSec": 4.353771,
-      "fps": null,
-      "resolutionBound": false,
-      "from": null
-    },
-    {
-      "id": "vo-sentence",
-      "src": "audio/vo-sentence.mp3",
-      "role": "audio",
-      "provenance": "generated",
-      "bytes": 57645,
-      "sha256": "8c3c8265d013a0474d8935adbe575ca58c2534638ca7fe20069fdddccc2e5e20",
-      "width": null,
-      "height": null,
-      "durationSec": 3.539208,
-      "fps": null,
-      "resolutionBound": false,
+      "resolutionBound": true,
+      "cut": {
+        "station": "note",
+        "takeFile": "2026-09-08 02-10-39.mp4",
+        "atSec": 286,
+        "crop": {
+          "top": 36,
+          "bottom": 28,
+          "left": 44,
+          "right": 48
+        }
+      },
       "from": null
     }
   ],
@@ -1207,20 +1308,5 @@
       }
     ]
   },
-  "sources": [
-    {
-      "id": "drafting-room-full",
-      "src": "audio/source/drafting-room-full.mp3",
-      "role": "audio",
-      "provenance": "source-library",
-      "bytes": 4727970,
-      "sha256": "59f4a1d7e0567f64a3c1cf192fd405955c5ca1f09b9a94257dd3e451889c2c0a",
-      "width": null,
-      "height": null,
-      "durationSec": 203.9335,
-      "fps": null,
-      "resolutionBound": false,
-      "from": "D:/github_repository/archcanvas-promo-video/audio/source/drafting-room-full.mp3"
-    }
-  ]
+  "sources": []
 }

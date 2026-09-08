@@ -35,21 +35,35 @@ Sources, in the order they were read: `archcanvas-promo-remotion/CLAUDE.md` §Co
 
 ---
 
-## The voiceover
+## The film is silent — and these are its words
 
-Eight spoken lines. The ninth station, `wall`, is silent on purpose — see the last row.
+**The voiceover was removed on 2026-09-08.** Eight ElevenLabs takes existed and were
+cleared; the key they were generated on turned out to be a **free tier**, and ElevenLabs'
+free plan carries no commercial licence, with the clause that content created outside a
+paid subscription — *before or after* — cannot be used commercially. Upgrading afterwards
+would not have licensed what already existed. All twelve ElevenLabs assets were deleted.
+See `docs/decisions.md` **D11**.
+
+So the argument moved back onto the screen. **These lines are read, not heard**, and that
+changed how they had to be written: a sentence that reads well aloud is usually too long
+to take in at a glance while a camera is moving past it. Every line below is **shorter
+than the spoken line it came from**, and the longer halves were cut rather than wrapped.
+
+Each `lines[]` entry is registered separately, because a line is the unit the gate checks.
+The clearance argument is unchanged — every one is a fragment of a sentence already cleared
+in the table below, or a verbatim shipped string in its own right.
 
 | Station | Line (verbatim) | Approved source | Clears |
 | --- | --- | --- | --- |
-| `interior` | `This room doesn't exist yet. It began as one sentence, from someone planning a build.` | "for anyone planning a build" — the product's own `/about` copy, shipped: *"ArchCanvas is an AI architectural designer for anyone planning a build"* (`archcanvas/src/app/(marketing)/about/page.tsx:51`), and positioning.md's ICP, *"people planning a build or major renovation"* | **The opener does not say "AI"** (do-NOT #2: in the ICP's own spaces, lead with the plan and the help). It makes no claim at all — it states that the rendering depicts something unbuilt, which is also the honest framing for an AI image. **B3 clear**: nothing about permits or buildability. |
-| `pair` | `It came out of the drawing underneath. The room you picture is the room you drew.` | The live landing page's rendering card, verbatim: *"the room you picture is the room you drew — same walls, same light"* (`archcanvas/src/app/(marketing)/page.tsx:37`), under the heading `Renderings grounded in the plan` | Literal and mechanical: the plan is rasterised and passed as `inputImages[0]` of the image edit. **Law 2 clear** — the frame only ever pairs a rendering with its own drawing, which `verify-numbers.mjs` enforces. |
-| `drawing` | `One plan, dimensioned to the millimetre. Walls that actually close.` | Sentence 1: the live landing page's outcome copy, verbatim (`BAND_COPY.outcome`, `archcanvas/src/components/landing/CompileScrollBand.tsx:24`). Sentence 2: approved tagline #5, cleared in `category.md` §6 | **B11 clear.** Dimensions are compiled geometry, not a clearance figure. Closure is a property the compiler genuinely holds. `category.md` clears tagline #5 against B1 and B11 in terms. |
-| `facts` | `Every room reachable. Every area exact. Checked wall by wall.` | Sentences 1–2: the live landing page's process copy, verbatim (`BAND_COPY.process`, same file, line 23). Sentence 3: `checked wall by wall`, the Layer 1 line, cleared verbatim in `category.md` §6 and shipped in the hero sub-headline | **B11 clear by construction.** Reachability (a real modeled access graph) and exact areas (shoelace / πR²) are two of the only three things this company may call measurement. The third, byte-identical determinism, is a developer-room claim and is not used. The verb is **checked**, never *measured*. |
-| `note` | `And where it couldn't get something right, it tells you, in writing, on the drawing.` | positioning.md §Elevator pitches, Consumer / self-builder — **verbatim**: *"And where it couldn't get something right, it tells you, in writing, on the drawing."* | The film's one Layer 2 claim, the receipt frame, backed by `SHIP_RESIDUAL`. **B12 clear — this is the sentence that concedes the gate does not block.** It advertises what survived, which is the opposite of claiming nothing did. |
-| `lineage` | `Refine it by talking to it. Move a wall, resize a room. Every edit is free.` | The Product Hunt gallery shotlist, Shot 3: *"Refine it by talking to it — move a wall, resize a room — as much as you want, free"*, and the live landing page's own `every edit is free` (`archcanvas/src/components/landing/StudioSection.tsx:25`) | Factual. Only `generateFloorPlanDSL` charges a credit; edits, quick actions, recompiles, forks and exports are free — the live pricing page says it in the same words: *"Refining it in conversation — edits, tweaks, recompiles — is free."* |
-| `sentence` | `Describe your home. Get a real, dimensioned floor plan.` | The live H1, verbatim (`HERO_COPY.h1`, `archcanvas/src/components/landing/HeroCompile.tsx:35`), and the Layer 1 buyer line cleared verbatim in `category.md` §6 | **Cleared against B3, B4, B5, B7, B11, B12** in the clearance table itself. Hygiene, not differentiation — which is exactly right for the payoff of a reversal. |
-| `mark` | `Pay only when you get a plan worth keeping.` | Approved tagline #6 (`messaging-library.md`), cleared in `category.md` §6 against B7 | Factual: credits, one credit per design generation, credits never expire, only generation charges. **No price appears** — see the standing rules below. |
-| `wall` | *(silence — no line, and none may be written)* | — | **B10.** The wall is sixty rasters of the offline designer eval. The eval is an internal instrument with a versioned judge and a private holdout; presenting it as a public benchmark, or putting any score on it, is banned in every room. Showing the volume and saying nothing is the only honest treatment. **B9** also bites here: no claim or denial of a model-loop gain, ever. |
+| `interior` | `This room doesn't exist yet.` | Not a claim. It states that the rendering depicts something unbuilt — which is also the honest framing for an AI image, and the film carries the product's own AI-generated pill beside it | **Does not open on "AI"** (do-NOT #2: in the ICP's own spaces, lead with the plan and the help). **B3 clear** — nothing about permits or buildability. |
+| `pair` | `The room you picture` `is the room you drew.` | The live landing page's rendering card, verbatim: *"the room you picture is the room you drew — same walls, same light"* (`archcanvas/src/app/(marketing)/page.tsx:37`), under the heading `Renderings grounded in the plan` | Literal and mechanical: the plan is rasterised and passed as `inputImages[0]`. **Law 2 clear** — the frame only ever pairs a rendering with its own drawing, enforced by `verify-numbers.mjs`. |
+| `drawing` | `One plan,` `dimensioned to the millimetre.` | The live landing page's outcome copy, verbatim (`BAND_COPY.outcome`, `archcanvas/src/components/landing/CompileScrollBand.tsx:24`), broken across two authored lines | **B11 clear.** Dimensions are compiled geometry, not a clearance figure. |
+| `facts` | `Every room reachable.` `Every area exact.` | The live landing page's process copy, verbatim (`BAND_COPY.process`, same file, line 23), split into its own two sentences | **B11 clear by construction.** Reachability (a real modeled access graph) and exact areas (shoelace / πR²) are two of the only three things this company may call measurement. The third, byte-identical determinism, is a developer-room claim and is not used. |
+| `note` | *(no card — the product's own review pin is the text)* | — | **The film's one honesty beat is an artifact, not a claim the film makes in its own voice.** The spoken Layer 2 line was cut with the voiceover and deliberately not replaced: the pin says it better, and in the product's own words. See `docs/decisions.md` D1 and D11. |
+| `lineage` | `Refine it by talking to it.` `Every edit is free.` | Sentence 1: the Product Hunt gallery shotlist, Shot 3. Sentence 2: the live landing page verbatim (`archcanvas/src/components/landing/StudioSection.tsx:25`) | Factual. Only `generateFloorPlanDSL` charges a credit; edits, quick actions, recompiles, forks and exports are free. |
+| `wall` | *(silence — no card, and none may be written)* | — | **B10.** Sixty rasters of the offline designer eval. Presenting that eval as a public benchmark, or putting any score on it, is banned in every room. **B9** bites here too. Showing the volume and saying nothing is the only honest treatment. |
+| `sentence` | *(the user's own typed brief — see the cards table)* | — | — |
+| `mark` | `Describe your home.` `Get a real, dimensioned floor plan.` | The live H1, verbatim (`HERO_COPY.h1`, `archcanvas/src/components/landing/HeroCompile.tsx:35`), which is authored as three lines and is taken here as two | **Cleared against B3, B4, B5, B7, B11, B12** in `category.md` §6. Hygiene, not differentiation — correct for a closing frame. |
 
 ## The cards
 

@@ -1,41 +1,32 @@
 node_modules/
 .env
 
-# public/ is the staged asset tree. Every byte of it is copied out of
-# ../archcanvas-promo-video by scripts/sync-assets.mjs and is regenerable, so it
-# is not tracked. src/data/assets.json IS tracked -- it is the ledger that says
-# which bytes the film was cut from, and it can be checked in a diff.
 # public/ is the staged asset tree. Most of it is copied out of
 # ../archcanvas-promo-video by scripts/sync-assets.mjs, or cut from the raw OBS
-# takes in D:ideos, and all of that is regenerable and uninteresting in a
-# diff -- so it is not tracked. src/data/assets.json IS tracked; it is the
-# ledger that says which bytes the film was cut from.
+# takes in D:ideos by scripts/cut-clips.mjs, and all of that is regenerable
+# and uninteresting in a diff -- so it is not tracked. src/data/assets.json IS
+# tracked; it is the ledger that says which bytes the film was cut from.
 #
-# The generated audio is the exception, and the line is this: material that was
-# COPIED from somewhere else or can be RE-RENDERED stays out; material that was
-# GENERATED HERE and cannot be reproduced comes in.
+# The music bed is the exception, and the line is this: material that was COPIED
+# from somewhere else or can be RE-RENDERED stays out; material that cannot be
+# reproduced comes in. SUNO will not return the same track twice, so the source
+# take is tracked, and so is the cut bed -- 5 MB between them, against a repo
+# that could not otherwise render its own film.
 #
-# The twelve files below cost API credits and are not deterministic -- asking
-# ElevenLabs for the same sound effect twice does not return the same bytes.
-# They are 1.04 MB in total. Leaving them untracked meant a fresh clone could
-# not render the film at all, and the loss would have been silent: a wipe of
-# public/audio followed by a sync reported success with the cues gone from disk
-# AND from the ledger. sync-assets.mjs now refuses that outright, but the real
-# fix is that these bytes live somewhere durable.
+# (Twelve ElevenLabs files were tracked here for exactly that reason between
+# 90693b2 and the licensing removal. See docs/decisions.md D11.)
 public/*
 !public/.gitkeep
 !public/audio/
 public/audio/*
-!public/audio/vo-*.mp3
-!public/audio/sfx-detent.mp3
-!public/audio/sfx-final-settle.mp3
-!public/audio/sfx-paper-rush.mp3
-!public/audio/sfx-room-air.mp3
-!public/audio/sfx-manifest.json
+!public/audio/bgm.mp3
 
-# Raw audio sources (a ~200s SUNO take is ~5MB and is regenerable input).
+# The SUNO take the bed is cut from. Tracked: it is the irreplaceable original,
+# and public/audio/bgm.mp3 is only a window of it -- the exact window, gain and
+# fade are recorded in docs/suno-prompt.md so the cut is reproducible from here.
 audio/source/*
 !audio/source/.gitkeep
+!audio/source/confident-arrival.mp3
 
 # Renders.
 #

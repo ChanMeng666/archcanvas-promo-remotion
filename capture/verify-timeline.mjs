@@ -87,6 +87,8 @@ for (const file of sourceFiles) {
 
 /* ── 2. the behaviour check ───────────────────────────────────────────────── */
 
+let wallNote = "wall not packed";
+
 const core = await loadCore();
 const { timeline, stations: stationsMod, world, layout, palette, tokens } = core;
 
@@ -189,24 +191,143 @@ for (const obj of world.WORLD_OBJECTS) {
   }
 }
 
-/* no raster is blown up past the bound, in any format, on any frame */
+/* the wall is packed from the ledger, completely */
 
-const rasterObjects = world.WORLD_OBJECTS.filter((o) => o.raster !== null);
+const wallGroup = JSON.parse(fs.readFileSync(path.join(SRC, "data", "assets.json"), "utf8")).wall;
+const ledgerTiles = wallGroup?.files ?? [];
+if (ledgerTiles.length !== world.WALL_TILES.length) {
+  fail(
+    `the ledger stages ${ledgerTiles.length} wall tiles but WALL_TILES holds ${world.WALL_TILES.length} — the widest shot would render a partial wall`
+  );
+}
+for (const t of ledgerTiles) {
+  if (!world.WALL_TILES.some((p) => p.name === t.name)) {
+    fail(`wall tile "${t.name}" is in the ledger but was not packed`);
+  }
+}
+{
+  const bottoms = new Array(world.WALL.cols).fill(0);
+  for (const t of world.WALL_TILES) bottoms[t.col] = Math.max(bottoms[t.col], t.y + t.h);
+  const spread = Math.max(...bottoms) - Math.min(...bottoms);
+  const packedH = Math.max(...bottoms);
+  if (Math.abs(packedH - world.WALL_GRID_H) > 1) {
+    fail(`WALL_GRID_H is ${world.WALL_GRID_H.toFixed(1)} but the packed tiles reach ${packedH.toFixed(1)}`);
+  }
+  // A ragged bottom edge reads as masonry. A third of the grid missing from
+  // one column reads as a bug, and it is the symptom of a re-sync that dropped
+  // the packer's assumptions (uniform width, sane height range).
+  if (spread > packedH * 0.25) {
+    fail(
+      `the wall's columns differ by ${Math.round(spread)} of ${Math.round(packedH)} (${((spread / packedH) * 100).toFixed(0)}%) — the pack no longer balances; check wall.sizeClasses in the ledger`
+    );
+  }
+  wallNote = `wall packed from the ledger: ${world.WALL_TILES.length} tiles, ${world.WALL.cols} columns, ${Math.round(world.WALL_GRID_W)} x ${Math.round(packedH)} (aspect ${(world.WALL_GRID_W / packedH).toFixed(2)}), ragged edge ${Math.round(spread)}`;
+}
+
+/* the review pin is never hung on the showcase drawing */
+
+/**
+ * The one geometric fact that would print a visible falsehood.
+ *
+ * The pin says the plan has no bathroom, laundry or storage. That is true of
+ * the filmed session's own 4-room / 108.00 m2 plan and false of
+ * plan-family-house, which has a Bath and a Laundry. If these two rects ever
+ * touch, the film states something untrue at the exact moment the voiceover
+ * makes its honesty claim — so this is checked as geometry, not remembered as
+ * a rule.
+ */
+{
+  const pin = world.worldObject("reviewPin");
+  const sheet = world.worldObject("planSheet");
+  if (world.rectsOverlap(pin.rect, sheet.rect)) {
+    fail(
+      "reviewPin overlaps planSheet — the pin's sentence is about the filmed session's plan, not plan-family-house, and plan-family-house HAS a bathroom and a laundry"
+    );
+  }
+}
+
+/* the pin and the fixed drawing are both in frame during `lineage` */
+
+{
+  const L = layout.deriveLayout(1920, 1080);
+  const f = world.STATION_FRAMES.lineage;
+  const pin = world.worldObject("reviewPin").rect;
+  const trail = world.worldObject("lineageTrail").rect;
+  const fixed = world.rect(
+    world.leftOf(trail) + world.LINEAGE.fixedDrawing.x + world.LINEAGE.fixedDrawing.w / 2,
+    world.topOf(trail) + world.LINEAGE.fixedDrawing.y + world.LINEAGE.fixedDrawing.h / 2,
+    world.LINEAGE.fixedDrawing.w,
+    world.LINEAGE.fixedDrawing.h
+  );
+  const cam = L.viewportFit(f.rect, f.fit);
+  const view = world.rect(cam.cx, cam.cy, 1920 / cam.scale, 1080 / cam.scale);
+  const holds = (r) =>
+    world.leftOf(view) <= world.leftOf(r) &&
+    world.rightOf(view) >= world.rightOf(r) &&
+    world.topOf(view) <= world.topOf(r) &&
+    world.bottomOf(view) >= world.bottomOf(r);
+  if (!holds(pin)) fail("the `lineage` framing does not hold the whole review pin — the named defect leaves frame before the fixed drawing arrives");
+  if (!holds(fixed)) fail("the `lineage` framing does not hold LINEAGE.fixedDrawing — plan-hero is what makes the pin's defect visibly fixed");
+  const dx = Math.abs(pin.cx - fixed.cx);
+  if (dx > 80) {
+    fail(
+      `LINEAGE.fixedDrawing sits ${Math.round(dx)} units off the pin's centre line — the pull-back reads as two unrelated cards rather than one being the answer to the other`
+    );
+  }
+}
+
+/* one walk of every frame in every format: raster bound, display widths, wall exclusivity */
+
 const worstUpscale = {};
+/** Max on-screen width each object ever reaches. This is a raster budget. */
+const widestDisplay = {};
+/** Widest an object gets while its opacity is mid-change, per format. */
+const widestWhileFading = {};
+const markStation = timeline.byId.mark;
+const markIntruders = new Set();
 
 for (const d of layout.DELIVERABLES) {
   const L = layout.deriveLayout(d.width, d.height);
   const framings = kfs.map((k) => L.viewportFit(k.rect, k.fit));
+  let reported = false;
 
   for (let frame = 0; frame <= timeline.totalFrames; frame += 1) {
     const cam = layout.cameraAt(kfs, framings, frame);
     const viewport = world.rect(cam.cx, cam.cy, d.width / cam.scale, d.height / cam.scale);
-    for (const obj of rasterObjects) {
+    const onMark = frame >= markStation.arriveFrame && frame < markStation.endFrame;
+
+    for (const obj of world.WORLD_OBJECTS) {
       if (!world.rectsOverlap(viewport, obj.rect)) continue;
       // An object faded out is not on screen, and a bound it cannot break is
       // not a failure. The fade windows are derived in timeline.ts precisely
       // so both the film and this gate read the same ones.
       if (timeline.objectOpacityAtFrame(obj, frame) <= 0.001) continue;
+
+      const shown = obj.rect.w * cam.scale;
+      const wkey = `${d.id} ${obj.id}`;
+      if (!widestDisplay[wkey] || shown > widestDisplay[wkey].px) {
+        widestDisplay[wkey] = { px: shown, frame };
+      }
+
+      // A fade is only allowed while the thing fading is a thumbnail. See
+      // FADE_INVISIBLE_PX in world.ts for why this is measured in pixels
+      // rather than argued from "it happens off-frame" — that argument is
+      // true in 16:9 and false in 9:16, which is the worst kind of true.
+      const o = timeline.objectOpacityAtFrame(obj, frame);
+      if (o > 0.001 && o < 0.999) {
+        const fkey = `${d.id} ${obj.id}`;
+        if (!widestWhileFading[fkey] || shown > widestWhileFading[fkey].px) {
+          widestWhileFading[fkey] = { px: shown, frame };
+        }
+      }
+
+      // The last beat is a wordmark and terms on ivory. Anything else still in
+      // frame there is a world object that drifted into the end card.
+      if (onMark && obj.id !== "endCard" && obj.id !== "briefLine") {
+        markIntruders.add(`${d.id}: ${obj.id}`);
+      }
+
+      if (obj.raster === null || reported) continue;
       const key = `${d.id} ${obj.id}`;
       const up = world.rasterUpscale(obj.rasterWorldW, cam.scale, world.NATIVE_RASTER[obj.raster].w);
       if (!worstUpscale[key] || up > worstUpscale[key].up) worstUpscale[key] = { up, frame };
@@ -218,11 +339,21 @@ for (const d of layout.DELIVERABLES) {
       );
       if (complaint) {
         fail(complaint);
-        frame = timeline.totalFrames + 1; // one report per format is enough
-        break;
+        reported = true; // one report per format is enough
       }
     }
   }
+}
+
+for (const [key, v] of Object.entries(widestWhileFading)) {
+  if (v.px > world.FADE_INVISIBLE_PX) {
+    fail(
+      `${key} is ${Math.round(v.px)}px wide at frame ${v.frame} while its opacity is changing (max ${world.FADE_INVISIBLE_PX}px) — the audience can watch it dissolve`
+    );
+  }
+}
+for (const intruder of markIntruders) {
+  fail(`${intruder} is in frame during the \`mark\` station — the end card is a wordmark and terms, and nothing else`);
 }
 
 /* the hero framing is derived from the bound, not hand-picked */
@@ -293,7 +424,7 @@ if (fs.existsSync(measurePath)) {
  * pointed at a number, not at which raster kind was missing. Matching roles
  * says WHICH.
  */
-const LEDGER_ROLES = { render: "rendering", wall: "wallTile", clip: "screenCapture" };
+const LEDGER_ROLES = { render: "rendering", wall: "wallTile", clip: "screenCapture", still: "pinCard" };
 
 const ledgerPath = path.join(SRC, "data", "assets.json");
 let ledgerNote = "src/data/assets.json not present yet — native raster sizes unverified";
@@ -304,11 +435,16 @@ if (fs.existsSync(ledgerPath)) {
     if (perRaster.length === 0) {
       ledgerNote = "src/data/assets.json has no maxUpscale.perRaster — native raster sizes unverified";
     } else {
+      // The NARROWEST row per role, not the widest. The bound has to hold for
+      // whichever asset a component actually reaches for, so it is computed
+      // against the one that runs out of pixels first — the ledger calls that
+      // `tightestRaster` and it was reconciling against the wrong end until
+      // the clip library grew a second, wider family.
       const widest = {};
       for (const row of perRaster) {
         const kind = LEDGER_ROLES[row.role];
         if (!kind) continue;
-        if (!widest[kind] || row.nativeWidth > widest[kind]) widest[kind] = row.nativeWidth;
+        if (!widest[kind] || row.nativeWidth < widest[kind]) widest[kind] = row.nativeWidth;
       }
       const parts = [];
       for (const [kind, native] of Object.entries(world.NATIVE_RASTER)) {
@@ -320,7 +456,7 @@ if (fs.existsSync(ledgerPath)) {
         parts.push(`${kind} ${native.w}px`);
         if (fromLedger !== native.w) {
           fail(
-            `NATIVE_RASTER.${kind}.w is ${native.w} but the ledger says ${fromLedger} — the upscale bound is being computed against the wrong number`
+            `NATIVE_RASTER.${kind}.w is ${native.w} but the narrowest staged ${kind} in the ledger is ${fromLedger} — the upscale bound is being computed against the wrong number`
           );
         }
       }
@@ -332,26 +468,6 @@ if (fs.existsSync(ledgerPath)) {
       ledgerNote = `native raster sizes reconciled with the ledger by role: ${parts.join(", ")}`;
     }
 
-    // The wall is packed from the ledger's own tiles, so its framing has to
-    // track them. A re-sync that swaps in taller plans leaves the widest shot
-    // with two empty columns and nothing else notices.
-    const tiles = ledger?.wall?.files ?? [];
-    if (tiles.length) {
-      const totalNativeH = tiles.reduce((n, t) => n + (t.height ?? 0), 0);
-      const packed =
-        (totalNativeH * (world.WALL.colW / world.NATIVE_RASTER.wallTile.w)) / world.WALL.cols +
-        (tiles.length / world.WALL.cols - 1) * world.WALL.gap;
-      const drift = Math.abs(packed - world.WALL_GRID_H) / packed;
-      if (tiles.length !== world.WALL.tiles) {
-        fail(`WALL.tiles is ${world.WALL.tiles} but the ledger stages ${tiles.length} wall tiles`);
-      }
-      if (drift > 0.2) {
-        fail(
-          `WALL_GRID_H is ${world.WALL_GRID_H} but the ledger's tiles pack to ~${Math.round(packed)} in ${world.WALL.cols} columns (${(drift * 100).toFixed(0)}% off) — the wall framing no longer fits the wall`
-        );
-      }
-      ledgerNote += `; wall packs to ~${Math.round(packed)} vs WALL_GRID_H ${world.WALL_GRID_H}`;
-    }
   } catch (err) {
     fail(`src/data/assets.json could not be read: ${err.message}`);
   }
@@ -363,6 +479,35 @@ console.log(`\nverify:timeline  ${sourceFiles.length} source files scanned, ${ti
 console.log(timeline.describe());
 console.log(`\n  ${ledgerNote}`);
 console.log(`  ${voSeamNote}`);
+console.log(`  ${wallNote}`);
+console.log("\n  widest on-screen width per object — the budget for anything cropped from a clip:");
+for (const [key, v] of Object.entries(widestDisplay)) {
+  console.log(`    ${key.padEnd(34)} ${String(Math.round(v.px)).padStart(5)}px  (frame ${v.frame})`);
+}
+
+// An object with `raster: null` is a promise that whatever fills it is
+// resolution-independent. This says what that promise costs: the native width
+// a raster would have to have to survive the same framing. No staged clip is
+// 2000px wide, so an object over that line cannot be filled with footage.
+console.log("\n  vector-only objects — native width a raster would need to fill them:");
+for (const obj of world.WORLD_OBJECTS) {
+  if (obj.raster !== null) continue;
+  const worst = Object.entries(widestDisplay)
+    .filter(([k]) => k.endsWith(` ${obj.id}`))
+    .reduce((n, [, v]) => Math.max(n, v.px), 0);
+  if (worst === 0) continue;
+  console.log(
+    `    ${obj.id.padEnd(14)} ${String(Math.round(worst)).padStart(5)}px on screen -> needs >= ${Math.round(worst / world.MAX_RASTER_UPSCALE)}px native`
+  );
+}
+
+console.log(`\n  widest while fading (max ${world.FADE_INVISIBLE_PX}px):`);
+const fadingRows = Object.entries(widestWhileFading);
+if (fadingRows.length === 0) console.log("    nothing in this film changes opacity");
+for (const [key, v] of fadingRows) {
+  console.log(`    ${key.padEnd(34)} ${String(Math.round(v.px)).padStart(5)}px  (frame ${v.frame})`);
+}
+
 console.log("\n  worst raster upscale reached, per format:");
 for (const [key, v] of Object.entries(worstUpscale)) {
   console.log(`    ${key.padEnd(34)} ${v.up.toFixed(3)}x  (frame ${v.frame}, max ${world.MAX_RASTER_UPSCALE})`);

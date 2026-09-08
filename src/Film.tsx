@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import { FONT } from "./fonts";
 import { useLayout } from "./layout";
@@ -12,6 +12,8 @@ import {
   objectOpacityAtFrame,
   progressInStation,
   stationAtFrame,
+  totalFrames,
+  BED_FADE_OUT_FRAMES,
 } from "./timeline";
 import { WORLD_OBJECTS } from "./world";
 import { Camera } from "./components/Camera";
@@ -108,6 +110,33 @@ export const Film: React.FC = () => {
           );
         })}
       </Camera>
+
+      {/**
+       * The bed. One file, and the film's only audio.
+       *
+       * Core `remotion` <Audio>, NOT @remotion/media's: the latter previewed
+       * fine and rendered a silent track (-91 dB across the whole file) in
+       * a11y-loop-promo-video. Worth retrying on a future release, not on this
+       * one.
+       *
+       * The file is already cut to length and already levelled, so the only
+       * thing the composition owns is the envelope. The fade-out starts at
+       * FADE_OUT_SEC because the track is still at full energy where the film
+       * ends -- the window was chosen to put the track's biggest jump on the
+       * camera's reversal at 62.5s, which leaves no natural ending inside the
+       * window, so the ending is made here rather than pretended at.
+       */}
+      <Audio
+        src={staticFile("audio/bgm.mp3")}
+        volume={(f) =>
+          interpolate(
+            f,
+            [totalFrames - BED_FADE_OUT_FRAMES, totalFrames],
+            [1, 0],
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+          )
+        }
+      />
     </AbsoluteFill>
   );
 };

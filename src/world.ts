@@ -18,11 +18,33 @@
  * object below exists at every frame of the film; the camera simply has not
  * arrived yet.
  *
- *   y ~=     0   the origin cluster — the rendering, its drawing, the pin,
- *                and, directly underneath the rendering, the sentence that
- *                produced all of it
- *   y ~=  4200   the lineage trail — earlier versions of a second drawing
- *   y ~= 12200   the plan wall — 60 rasters, the furthest-out beat
+ *   y ~=     0   the SHOWCASE cluster — render-family-house-interior beside
+ *                plan-family-house, its own drawing. What the product makes.
+ *                Directly underneath the rendering, at the origin, the
+ *                sentence that produced all of it.
+ *   y ~=  2400   the review pin — the near edge of the session cluster
+ *   y ~=  4300   the SESSION cluster — the real filmed run: plan-hero and the
+ *                product recordings. How you work with it.
+ *   y ~= 12600   the plan wall — 60 rasters, the furthest-out beat
+ *
+ * ── Two clusters, and why the pin is not on the showcase drawing ───────────
+ *
+ * The review pin is the product's own sentence, read off c06-review-pins.mp4
+ * at t=20.0s: "PROGRAM — The 110m2 plan provides no bathroom, laundry, or
+ * dedicated storage." That is true of the session's own 4-room, 108.00 m2 plan
+ * and FALSE of plan-family-house (which has a Bath and a Laundry) and of
+ * plan-hero (which has a Bathroom). Hanging it on the showcase drawing would
+ * print a visible falsehood at the exact moment the voiceover makes the film's
+ * honesty claim, so the pin lives in the session cluster with the drawing it
+ * was actually written about.
+ *
+ * The move pays for itself. `note` becomes the near edge of the session
+ * cluster rather than a detour on the showcase sheet, so stations
+ * facts -> note -> lineage -> wall are one continuous outward move with no
+ * turn in it. And `LINEAGE.fixedDrawing` puts plan-hero — the same session
+ * later, with the Bathroom and the Hall the c06 state lacks — directly BELOW
+ * the pin, so the pull-back reveals the named defect fixed. No copy points at
+ * it, and none should.
  *
  * The sentence sits AT the origin, underneath the rendering, from frame 0.
  * That is the whole trick of station 7: the camera does not cut back to a
@@ -34,6 +56,18 @@
  * the camera on the way home. That is deliberate, and it is why the wall is
  * directly below the origin rather than off to one side.
  */
+
+import ledger from "./data/assets.json";
+
+/**
+ * Things the world could not derive and had to assume.
+ *
+ * `timeline.ts` folds these into its own `warnings`, so a wall the ledger
+ * could not describe fails `verify-timeline --strict` exactly like a missing
+ * voice take. Nothing here is ever silently defaulted.
+ */
+const worldWarningList: string[] = [];
+export const worldWarnings: readonly string[] = worldWarningList;
 
 /* ── rects ────────────────────────────────────────────────────────────────── */
 
@@ -92,6 +126,26 @@ export const rectsOverlap = (a: WorldRect, b: WorldRect): boolean =>
 export const MAX_RASTER_UPSCALE = 1.5;
 
 /**
+ * How wide an object may be on screen while its opacity is changing.
+ *
+ * Two objects have to fade — the rendering has to leave the origin so the
+ * sentence underneath it can be found, and the wordmark has to arrive. Every
+ * other object in this world is present from frame 0 to frame last, because a
+ * film whose whole idea is one continuous move should not be dissolving things
+ * in and out behind your back.
+ *
+ * The tall formats are what make this a number rather than a principle. At
+ * 1080x1920 the widest shot holds the ENTIRE world above the wall, so "it
+ * happens off-frame" is a 16:9-only argument and checking it that way passes a
+ * gate on the master while the vertical cut dissolves in plain sight. So the
+ * test is size instead of visibility: 160px is 8% of the 1920 master's width
+ * and 15% of the 1080 cut's, which is a thumbnail during a pull-back that is
+ * still accelerating outward. `verify-timeline.mjs` walks every frame of every
+ * fade window in every format against it.
+ */
+export const FADE_INVISIBLE_PX = 160;
+
+/**
  * Native pixel sizes. Measured, not guessed.
  *
  * These are the numbers the asset ledger reports.`verify-timeline.mjs`
@@ -110,12 +164,19 @@ export const NATIVE_RASTER = {
    */
   wallTile: { w: 1536, h: 1086 },
   /**
-   * The product screen recordings on the lineage trail — the ledger's role
-   * "clip", eight of them. Wider than a rendering, which is exactly the sort
-   * of thing a hand-written "the biggest asset is 1536px" comment gets wrong;
-   * `verify-timeline.mjs` reconciles these three against the ledger by role.
+   * The product screen recordings — the ledger's role "clip". Wider than a
+   * rendering, which is the sort of thing a hand-written "the biggest asset is
+   * 1536px" comment gets wrong.
+   *
+   * This is the NARROWEST staged clip, not the widest, and that is the whole
+   * point of the number: the bound has to hold for whichever clip a component
+   * actually reaches for, so it is computed against the one that runs out of
+   * pixels first. The ledger stages two families (1786x944 and 1828x1016) and
+   * `verify-timeline.mjs` reconciles this against the minimum per role.
    */
   screenCapture: { w: 1786, h: 944 },
+  /** The captured review-note card — the ledger's role "still". */
+  pinCard: { w: 1828, h: 1016 },
 } as const;
 
 export type RasterKind = keyof typeof NATIVE_RASTER;
@@ -156,50 +217,217 @@ export type WorldObjectId =
   | "endCard";
 
 /**
- * The 60-plan wall: fixed columns, ragged tiles.
+ * The 60-plan wall: fixed columns, ragged tiles, packed from the ledger.
  *
- * The tiles share a width (1536 native) and nothing else — the ledger's
- * `wall.sizeClasses` spans 1086 to 2172 tall — so this is a masonry column
- * layout, not a grid. `PlanWall` packs the tiles into `cols` columns of
- * `colW`, balancing the column heights; these constants are what it packs
- * into, and what the camera framing below is sized from.
+ * The tiles share a width (1536 native, `wall.uniformWidth: true`) and nothing
+ * else — `wall.heightRange` is [1086, 2172] across six size classes, because a
+ * taller plan is a taller drawing. So this is MASONRY ON A FIXED COLUMN WIDTH,
+ * never a fixed tile height: a uniform grid would have to letterbox or crop
+ * most of the set, and cropping a plan raster is precisely what law 2 exists
+ * to prevent.
+ *
+ * Only the column count and the gutters are chosen here. Everything else —
+ * every tile's size and position, and the grid's own height — is computed from
+ * `src/data/assets.json` at module scope, so a re-sync of the eval library
+ * moves the camera framing with it instead of leaving the widest shot with two
+ * empty columns.
  */
 export const WALL = {
+  /**
+   * Ten columns. Packs to a 1.77 aspect, which is 16:9 to two decimals — the
+   * landscape master frames it with almost nothing wasted, and it stays square
+   * enough not to shrink to a letterbox in the 9:16 cut. Eleven columns reads
+   * 1.95 and suits only landscape; eight reads 1.11 and suits only vertical.
+   */
   cols: 10,
   colW: 1600,
   gap: 200,
-  tiles: 60,
 } as const;
 
-export const WALL_GRID_W = WALL.cols * WALL.colW + (WALL.cols - 1) * WALL.gap;
+export type WallTile = {
+  /** File name under `public/wall/`. */
+  name: string;
+  col: number;
+  /** World coordinates, top-left, relative to the grid's top-left. */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
 
 /**
- * Nominal packed height: the ledger's 60 tiles sum to ~84,025 native px of
- * height, which over 10 columns at colW/1536 = 1.042 is ~8,752 world units,
- * plus five inter-tile gaps. Rounded, because a balanced masonry pack lands
- * near its mean rather than on it. `verify-timeline.mjs` recomputes this from
- * `src/data/assets.json` and fails if a re-sync moves it more than 20%, which
- * is the drift that leaves the widest shot with two empty columns.
- */
-export const WALL_GRID_H = 9800;
-
-/**
- * The lineage trail: earlier versions of a second drawing, and the product
- * screen recordings, as world-space cards.
+ * Longest-processing-time packing: assign the tallest tile to the shortest
+ * column, repeatedly.
  *
- * Card sizes live here rather than in `LineageTrail` because the camera's
- * upscale gate has to know how wide one recording is displayed — the clips are
- * 1786 x 944 and are the widest rasters in the film.
+ * Plain greedy in ledger order leaves a 2,263-unit ragged bottom, because the
+ * seventeen 2172-tall tiles come first and the short ones cannot level it
+ * afterwards. LPT gets it to 1,045 across a 10,050-tall grid — a 10% ragged
+ * edge, which reads as masonry rather than as a mistake — and lands exactly
+ * six tiles in every column. Ties break on ledger index, so the pack is
+ * deterministic and a re-run cannot reshuffle the wall.
+ *
+ * Tiles keep their LEDGER order within a column; only the assignment is
+ * sorted. `PlanWall` renders this array and computes nothing of its own.
+ */
+const packWall = (): { tiles: WallTile[]; gridW: number; gridH: number } => {
+  const group = ledger.wall;
+  const files = (group?.files ?? []) as { name: string; width: number; height: number }[];
+  const nativeW = group?.width ?? 0;
+  const gridW = WALL.cols * WALL.colW + (WALL.cols - 1) * WALL.gap;
+
+  if (files.length === 0 || !nativeW) {
+    worldWarningList.push(
+      "src/data/assets.json has no wall group with a uniform width — the plan wall cannot be packed and the `wall` station is framed on an empty grid. Run `npm run sync:assets`."
+    );
+    return { tiles: [], gridW, gridH: gridW / 1.77 };
+  }
+  if (group.uniformWidth !== true) {
+    worldWarningList.push(
+      `src/data/assets.json says the wall tiles are NOT uniform width (${JSON.stringify(group.heightRange)}) — the column layout assumes they are, so tiles will be scaled inconsistently.`
+    );
+  }
+
+  const scale = WALL.colW / nativeW;
+  const colBottom = new Array<number>(WALL.cols).fill(0);
+  const colOf = new Array<number>(files.length).fill(0);
+
+  const byHeight = files
+    .map((t, i) => ({ i, h: t.height * scale }))
+    .sort((a, b) => b.h - a.h || a.i - b.i);
+
+  for (const t of byHeight) {
+    let c = 0;
+    for (let i = 1; i < WALL.cols; i += 1) if (colBottom[i] < colBottom[c]) c = i;
+    colOf[t.i] = c;
+    colBottom[c] += t.h + WALL.gap;
+  }
+
+  const cursor = new Array<number>(WALL.cols).fill(0);
+  const tiles: WallTile[] = files.map((t, i) => {
+    const col = colOf[i];
+    const h = t.height * scale;
+    const tile: WallTile = {
+      name: t.name,
+      col,
+      x: col * (WALL.colW + WALL.gap),
+      y: cursor[col],
+      w: WALL.colW,
+      h,
+    };
+    cursor[col] += h + WALL.gap;
+    return tile;
+  });
+
+  return { tiles, gridW, gridH: Math.max(...cursor) - WALL.gap };
+};
+
+const packed = packWall();
+
+/** Every wall tile, positioned. `PlanWall` renders this and nothing else. */
+export const WALL_TILES: readonly WallTile[] = packed.tiles;
+export const WALL_GRID_W = packed.gridW;
+export const WALL_GRID_H = packed.gridH;
+
+/**
+ * The session cluster's body: the real filmed run, as world-space cards.
+ *
+ * Eight recordings are staged (c05, c06, c07, c08, c10, c11, c13, c15) — all
+ * 1786 x 944, exactly 30/1 fps, and **none of them carries an audio stream**,
+ * so nothing here can leak sound into the mix. c09 was never staged; do not
+ * reference it. c06 belongs to the pin above, not to the trail.
+ *
+ * Card sizes live here rather than inside `LineageTrail` because the camera's
+ * upscale bound has to know how wide one recording is displayed — the clips
+ * are the widest rasters in the film.
  */
 export const LINEAGE = {
   /** One product screen recording. 1786:944 native, kept exact. */
   captureW: 1500,
   captureH: 793,
-  /** One earlier version of the second drawing. SVG — no resolution ceiling. */
+  /** One earlier version of the session's drawing. SVG — no resolution ceiling. */
   versionW: 1100,
   versionH: 780,
   gap: 120,
+  /**
+   * plan-hero.svg's slot, in coordinates local to the trail's own box.
+   *
+   * This is the payoff of the two-cluster layout and it is the one thing about
+   * the trail's interior that is NOT the component's to choose: plan-hero is
+   * the same session later — same title block, "North-Facing Family Home", and
+   * it has the Bathroom and the Hall the c06 state lacks — so it sits directly
+   * BELOW the review pin. As the camera pulls back off the pin, the fixed
+   * drawing enters frame under the sentence naming the defect. It lands for
+   * the people who look, which is the right amount.
+   *
+   * Order the rest of the trail around it however reads best.
+   */
+  fixedDrawing: { x: 1650, y: 230, w: 1100, h: 780 },
 } as const;
+
+/**
+ * The review pin's provenance.
+ *
+ * `note-pin-card` in the ledger is the captured card, so `reviewPin` is
+ * registered as a raster and the bound is enforced against it. If ReviewPin
+ * instead typesets the sentence from `src/data/script.json`, the bound simply
+ * never binds.
+ *
+ * Either way it is the product's own words. If a CROP is taken rather than the
+ * whole card, the crop is a narrower raster than the ledger row: divide the
+ * "widest on-screen width" that `verify-timeline.mjs` prints for reviewPin by
+ * 1.5, and the crop must keep at least that many native pixels.
+ */
+export const REVIEW_PIN = {
+  sourceClip: "c06-review-pins",
+  sourceTimecodeSec: 20.0,
+} as const;
+
+/* ── cluster anchors ──────────────────────────────────────────────────────── */
+
+/**
+ * The two clusters, named once and then referred to.
+ *
+ * The station framings below are DERIVED from these rather than typed beside
+ * them. That is the difference between "the pin and the fixed drawing happen
+ * to both be in frame" and "they cannot not be": move the pin and the
+ * `lineage` framing follows it, because the framing is the union of the two.
+ */
+
+/** Showcase cluster: what the product makes. */
+const SHOWCASE_RENDER = rect(0, 0, 1536, 1024);
+const SHOWCASE_SHEET = rect(2388, 0, 2400, 1700);
+
+/**
+ * Session cluster: how you work with it.
+ *
+ * The pin is the near edge — 1,550 units below the showcase sheet's bottom,
+ * which is far enough that it stays out of frame through `pair` (whose widest
+ * framing reaches y 1444) and near enough that the crossing from `facts` is a
+ * 2.7k-unit move rather than a journey.
+ */
+// 1500 x 834 is 1.799 — the captured card's own 1828:1016 aspect, so the real
+// still drops in without a letterbox or a crop.
+const SESSION_PIN = rect(2100, 2400, 1500, 834);
+const SESSION_TRAIL = rect(2900, 4300, 6000, 2600);
+
+/** The lowest thing above the wall. The wall's position is derived from it. */
+const SESSION_BOTTOM = bottomOf(SESSION_TRAIL);
+
+/** Ground kept around the wall inside its framing. */
+export const WALL_PAD = 400;
+
+/**
+ * How far below the session cluster the wall sits.
+ *
+ * Not a taste number: `contain` fitting the wall leaves letterbox margin above
+ * the grid, and the session trail has to clear THAT, not just the grid. 1,400
+ * units covers the margin in all four formats with room to spare — and
+ * `verify-timeline.mjs` asserts the real invariant directly, by checking that
+ * no other object is inside the viewport on any frame of the `wall` station in
+ * any format. If a re-sync makes the wall taller, WALL_CY moves with it.
+ */
+export const WALL_CLEARANCE = 1400;
+export const WALL_CY = SESSION_BOTTOM + WALL_CLEARANCE + WALL_GRID_H / 2 + WALL_PAD;
 
 export type WorldObject = {
   id: WorldObjectId;
@@ -242,57 +470,65 @@ export const WORLD_OBJECTS: readonly WorldObject[] = [
   },
   {
     id: "renderCard",
-    rect: rect(0, 0, 1536, 1024),
+    rect: SHOWCASE_RENDER,
     station: "interior",
     raster: "rendering",
     rasterWorldW: 1536,
+    // The ONLY object that has to go, and it has to go because it sits on top
+    // of the sentence. `wall` is the one station where it is a thumbnail in
+    // every format — see FADE_INVISIBLE_PX below, which the gate enforces.
+    // RenderCard must paint opaque edge to edge: briefLine is underneath it
+    // for the whole first act and a transparent card would leak the ending.
     fadeOutAt: "wall",
     fadeInAt: null,
     note: "The photoreal interior, placed at native pixel size so scale 1.0 means 1:1.",
   },
   {
     id: "planSheet",
-    rect: rect(2388, 0, 2400, 1700),
+    rect: SHOWCASE_SHEET,
     station: "drawing",
     raster: null,
     rasterWorldW: null,
-    fadeOutAt: "wall",
+    fadeOutAt: null,
     fadeInAt: null,
     note: "Its OWN drawing: a sheet at roughly A-series proportion, beside the rendering.",
   },
   {
     id: "dimStrings",
-    rect: rect(2388, 0, 2400, 1700),
+    rect: SHOWCASE_SHEET,
     station: "drawing",
     raster: null,
     rasterWorldW: null,
-    fadeOutAt: "wall",
+    fadeOutAt: null,
     fadeInAt: null,
     note: "Dimension strings and the CAD layer order, registered to the sheet — same rect, drawn on top.",
   },
   {
     id: "reviewPin",
-    rect: rect(2600, 520, 700, 340),
+    rect: SESSION_PIN,
     station: "note",
-    raster: null,
-    rasterWorldW: null,
-    fadeOutAt: "wall",
+    // Registered as the captured card (ledger role "still", note-pin-card),
+    // which is the conservative reading: if ReviewPin typesets the sentence
+    // from script.json instead, a bound it cannot breach costs nothing.
+    raster: "pinCard",
+    rasterWorldW: 1500,
+    fadeOutAt: null,
     fadeInAt: null,
-    note: "A real review pin sitting ON the sheet. The camera crosses it and does not stop.",
+    note: "The product's own review note, from c06 at t=20.0s. The NEAR EDGE of the session cluster, not a detour on the showcase sheet: the plan it is written about is the session's, not plan-family-house's.",
   },
   {
     id: "lineageTrail",
-    rect: rect(1400, 4200, 6000, 2600),
+    rect: SESSION_TRAIL,
     station: "lineage",
     raster: "screenCapture",
     rasterWorldW: LINEAGE.captureW,
-    fadeOutAt: "wall",
+    fadeOutAt: null,
     fadeInAt: null,
-    note: "Earlier versions of a SECOND drawing plus product screen recordings, as world-space cards.",
+    note: "The session cluster: plan-hero in the slot directly under the pin, plus the c07/c08/c10/c11 recordings. Its own rect sets where LINEAGE.fixedDrawing lands.",
   },
   {
     id: "planWall",
-    rect: rect(1400, 12200, WALL_GRID_W, WALL_GRID_H),
+    rect: rect(1400, WALL_CY, WALL_GRID_W, WALL_GRID_H),
     station: "wall",
     raster: "wallTile",
     rasterWorldW: WALL.colW,
@@ -307,8 +543,12 @@ export const WORLD_OBJECTS: readonly WorldObject[] = [
     raster: null,
     rasterWorldW: null,
     fadeOutAt: null,
-    fadeInAt: "sentence",
-    note: "Wordmark and terms, just below the sentence. Fades up during `sentence`, while still off the bottom of frame.",
+    // Up at `wall` for the same reason the rendering goes down there: at that
+    // scale it is a thumbnail in all four formats. Fading it in during
+    // `sentence` instead would have it materialise a foot below the sentence
+    // in the 9:16 cut, where the viewport is tall enough to hold both.
+    fadeInAt: "wall",
+    note: "Wordmark and terms, just below the sentence. Present from the widest shot onward, so the camera settles onto something that was already there.",
   },
 ];
 
@@ -362,13 +602,13 @@ export const STATION_FRAMES: Record<string, StationFrame> = {
     note: "Full-bleed in landscape only; a card everywhere else — see heroFullBleed in layout-core.ts. A very slow push, 0.06 stops across the whole station.",
   },
   pair: {
-    rect: rect(1410, 0, 4820, 2020),
+    rect: padRect(unionRect(SHOWCASE_RENDER, SHOWCASE_SHEET), 250, 160),
     fit: "contain",
     drift: { dx: 70, dy: 0, dStops: -0.03 },
     note: "The pull-back that reveals the rendering was a card, with its own drawing beside it.",
   },
   drawing: {
-    rect: rect(2388, 0, 2760, 1800),
+    rect: padRect(SHOWCASE_SHEET, 180, 50),
     fit: "contain",
     drift: { dx: 0, dy: 0, dStops: 0.1 },
     note: "Push into the sheet while the CAD layers arrive and the dimension strings draw.",
@@ -380,19 +620,19 @@ export const STATION_FRAMES: Record<string, StationFrame> = {
     note: "One room, tight. Lands at the magnification interior opened on (1.25 in landscape).",
   },
   note: {
-    rect: rect(1850, 430, 1400, 1000),
+    rect: padRect(SESSION_PIN, 100, 125),
     fit: "contain",
-    drift: { dx: 1250, dy: 0, dStops: 0 },
-    note: "A pure pan, zero zoom: the pin enters from the right, crosses, and is still leaving when the station ends. The camera does not stop.",
+    drift: { dx: 260, dy: 520, dStops: -0.16 },
+    note: "The crossing. The camera leaves the showcase cluster and arrives at the near edge of the session cluster, reads the pin, and keeps going — the drift is already carrying it down onto the trail when the station ends. It never stops here. `leadInSec` on this station is a 4.0s travel and is the only thing setting the crossing's speed.",
   },
   lineage: {
-    rect: rect(1400, 4200, 6400, 3000),
+    rect: padRect(unionRect(SESSION_PIN, SESSION_TRAIL), 200),
     fit: "contain",
     drift: { dx: 260, dy: 0, dStops: -0.08 },
-    note: "Pull back and down onto the second drawing's earlier versions.",
+    note: "Sized to hold the review pin AND the trail at once — that co-visibility is the beat, and verify-timeline.mjs asserts it rather than trusting these numbers.",
   },
   wall: {
-    rect: rect(1400, 12200, 18600, 10400),
+    rect: rect(1400, WALL_CY, WALL_GRID_W + WALL_PAD * 2, WALL_GRID_H + WALL_PAD * 2),
     fit: "contain",
     drift: { dx: 0, dy: 120, dStops: -0.1 },
     note: "The furthest-out beat. Still drifting outward when it ends, so the film never quite settles here.",

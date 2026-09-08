@@ -43,16 +43,19 @@ export type StationId =
 
 export type Station = {
   id: StationId;
-  /** Never shorter than this, even with no voice. */
-  minSec: number;
-  /** Never longer than this. A voice take that needs more triggers a warning. */
-  maxSec: number;
+  /**
+   * How long this station lasts, in seconds. Total, including the lead-in.
+   *
+   * This is a flat number because the film is SILENT. It briefly derived from
+   * measured voice takes; the voiceover was removed on 2026-09-08 (licensing —
+   * docs/decisions.md D11) and with it the only thing that had a claim to set
+   * the pace. The camera is now the edit, so the edit is typed here, once.
+   */
+  holdSec: number;
   /** Camera travel in, and the voice's delay after the beat starts. */
   leadInSec: number;
   /** Silence held after the voice ends, before the next camera move begins. */
   tailSec: number;
-  /** Key into `src/data/vo.json` -> takes. null = this beat has no voice. */
-  vo: string | null;
   /**
    * Ground ramp position at the START of this station, interpolated linearly
    * to the next station's value. See GROUND_STOPS in tokens.ts.
@@ -65,87 +68,76 @@ export type Station = {
 export const STATIONS: readonly Station[] = [
   {
     id: "interior",
-    minSec: 8,
-    maxSec: 12,
-    leadInSec: 0,
-    tailSec: 1.0,
-    vo: "interior",
+    holdSec: 7.0,
+    leadInSec: 0.0,
+    tailSec: 0.8,
     groundStop: 0,
     intent: "A photoreal interior rendering, filling the frame. Very slow drift. Not a title card, not a logo — the room first.",
   },
   {
     id: "pair",
-    minSec: 10,
-    maxSec: 14,
-    leadInSec: 2.2,
-    tailSec: 1.0,
-    vo: "pair",
+    holdSec: 8.0,
+    leadInSec: 2.0,
+    tailSec: 0.8,
     groundStop: 0.2,
     intent: "Pull back: the rendering is a card, and its own drawing is beside it. The film's first claim, made by the camera rather than by a word.",
   },
   {
     id: "drawing",
-    minSec: 14,
-    maxSec: 18,
+    holdSec: 11.0,
     leadInSec: 2.0,
-    tailSec: 1.0,
-    vo: "drawing",
+    tailSec: 0.8,
     groundStop: 1,
     intent: "Push into the drawing. CAD layers arrive in order; dimension strings draw themselves.",
   },
   {
     id: "facts",
-    minSec: 12,
-    maxSec: 16,
-    leadInSec: 1.8,
-    tailSec: 1.0,
-    vo: "facts",
+    holdSec: 8.5,
+    leadInSec: 1.6,
+    tailSec: 0.8,
     groundStop: 1,
     intent: "Tight on one room: its area label counts up, the circulation overlay resolves.",
   },
   {
     id: "note",
-    minSec: 8,
-    maxSec: 12,
-    leadInSec: 1.6,
-    tailSec: 0.8,
-    vo: "note",
+    holdSec: 9.0,
+    // 4.0s, and it is the longest lead-in in the film for a reason: this is
+    // the crossing from the showcase cluster to the session cluster, ~2,750
+    // world units. At 3.4s it runs at 930 screen px/s and reads as a whip; at
+    // 4.0s it is 790 and reads as a journey. It is the only control the move
+    // has — see the leadInSec note at the top of this file.
+    leadInSec: 3.6,
+    tailSec: 0.6,
     groundStop: 1,
-    intent: "Pan past a real review pin sitting on the drawing. Readable, but the camera does not stop for it.",
+    intent: "Cross into the session cluster and read the product's own review note in passing. The camera does not stop — its drift is already carrying it down onto the trail.",
   },
   {
     id: "lineage",
-    minSec: 12,
-    maxSec: 16,
-    leadInSec: 2.4,
-    tailSec: 1.0,
-    vo: "lineage",
+    holdSec: 9.0,
+    leadInSec: 2.2,
+    tailSec: 0.8,
     groundStop: 2,
     intent: "Pull back onto a second drawing's earlier versions, with product screen recordings as world-space cards.",
   },
   {
     id: "wall",
-    minSec: 8,
-    maxSec: 12,
-    leadInSec: 3.0,
-    tailSec: 0.8,
+    holdSec: 7.0,
+    leadInSec: 2.6,
+    tailSec: 0.6,
     // The film's one silent beat. No voice, no text, no number — the widest
     // shot earns nothing from a sentence over it, and the ground ramp crosses
     // its unreadable mid-luminance band here precisely because nothing is set
     // in type. See the CONTRAST_PAIRS note in tokens.ts.
     // If the script ever grows a line for the wall, change this one field to
     // "wall" and the timeline will absorb it.
-    vo: null,
     groundStop: 2,
     intent: "Furthest out: a montage wall of 60 plan rasters. No text, no number.",
   },
   {
     id: "sentence",
-    minSec: 8,
-    maxSec: 12,
+    holdSec: 7.5,
     leadInSec: 3.0,
-    tailSec: 1.0,
-    vo: "sentence",
+    tailSec: 0.8,
     // 3.4 rather than 4: the wall's own ramp has to clear the ink-flip band
     // BEFORE this station starts, or the sentence types itself onto a ground
     // where neither ink clears 4.5:1.
@@ -154,11 +146,9 @@ export const STATIONS: readonly Station[] = [
   },
   {
     id: "mark",
-    minSec: 8,
-    maxSec: 10,
-    leadInSec: 2.2,
-    tailSec: 1.2,
-    vo: "mark",
+    holdSec: 8.0,
+    leadInSec: 2.0,
+    tailSec: 1.0,
     groundStop: 4,
     intent: "Hold. Ivory ground, the wordmark, and the terms. The camera has stopped.",
   },

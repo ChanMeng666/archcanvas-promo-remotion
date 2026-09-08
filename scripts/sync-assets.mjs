@@ -151,23 +151,21 @@ const GROUPS = [
       { id: "archcanvas-wordmark", src: `${CAP}/archcanvas-wordmark.svg` },
     ],
   },
-  {
-    role: "audio",
-    label: "audio",
-    dest: "audio",
-    note: "bgm.mp3 is a PLACEHOLDER until the founder delivers a new SUNO track.",
-    items: [
-      { id: "bgm", src: "audio/bgm.mp3" },
-      { id: "sfx-instrument", src: "audio/sfx-instrument.mp3" },
-      { id: "sfx-paper-settle", src: "audio/sfx-paper-settle.mp3" },
-      { id: "sfx-paper-sweep", src: "audio/sfx-paper-sweep.mp3" },
-      { id: "sfx-pencil-line", src: "audio/sfx-pencil-line.mp3" },
-      { id: "sfx-stamp", src: "audio/sfx-stamp.mp3" },
-      { id: "sfx-tick", src: "audio/sfx-tick.mp3" },
-      { id: "sfx-ui-click", src: "audio/sfx-ui-click.mp3" },
-      { id: "sfx-warm-swell", src: "audio/sfx-warm-swell.mp3" },
-    ],
-  },
+  // NO AUDIO GROUP, AND THAT IS DELIBERATE.
+  //
+  // The first film's bed and its eight sound effects used to be staged here.
+  // Every one of those eight was generated through ElevenLabs, and on
+  // 2026-09-08 the key they came from was found to be a FREE tier, whose plan
+  // carries no commercial licence -- with the clause that content created
+  // outside a paid subscription, before or after, cannot be used commercially.
+  // See docs/decisions.md D11.
+  //
+  // This film's audio is one file: public/audio/bgm.mp3, cut by
+  // tools/prepare-bed.ps1 from the founder's own SUNO take. Nothing about it
+  // comes from the source library, so nothing about it is synced. Re-adding an
+  // audio group here would silently re-stage the retired effects and overwrite
+  // the bed -- which is exactly what happened once, on the run that removed
+  // them.
 ];
 
 /** The plan wall: 60 rasterised plans from one recorded designer benchmark run. */
@@ -177,9 +175,12 @@ const WALL_SRC_DIR = `${CAP}/_archcanvas-library/bench`;
  * Staged outside `public/` — a raw input, not something the film loads with
  * `staticFile()`. Gitignored here as it is there.
  */
-const SOURCES = [
-  { id: "drafting-room-full", role: "audio", dest: "audio/source", src: "audio/source/drafting-room-full.mp3" },
-];
+// Empty for the same reason: `audio/source/drafting-room-full.mp3` is the FIRST
+// film's SUNO take and this film is not cut from it. This film's source take,
+// `audio/source/confident-arrival.mp3`, is tracked in git rather than synced --
+// SUNO will not return the same track twice, so it is irreplaceable, not
+// regenerable, and a sync source is the wrong home for it.
+const SOURCES = [];
 
 // ---------------------------------------------------------------------------
 // Measurement
@@ -449,30 +450,48 @@ const generatedNames = [...new Set([...listMp3(STAGED_AUDIO_DIR), ...listMp3(DUR
   .filter((name) => !stagedBasenames.has(name))
   .sort();
 
+// The tripwire covers EVERY row this repo produced rather than copied — generated audio
+// and locally cut footage alike. A source-library row heals from ../archcanvas-promo-video
+// on the next sync; these do not. Losing one is unrecoverable, so a sync that would write a
+// ledger forgetting it refuses instead.
 const DROP_GENERATED = process.argv.includes("--drop-generated");
-const previousGenerated = (previousLedger?.assets ?? []).filter((a) => a.provenance === "generated");
-const lostGenerated = previousGenerated.filter((a) => !fs.existsSync(path.join(PUBLIC_DIR, a.src)));
+const previousLocal = (previousLedger?.assets ?? []).filter(
+  (a) => a.provenance && a.provenance !== "source-library",
+);
+const lostLocal = previousLocal.filter((a) => !fs.existsSync(path.join(PUBLIC_DIR, a.src)));
 
-if (lostGenerated.length > 0 && !DROP_GENERATED) {
+if (lostLocal.length > 0 && !DROP_GENERATED) {
+  const cues = lostLocal.filter((a) => a.provenance === "generated");
+  const cuts = lostLocal.filter((a) => a.provenance === "cut");
   die(
     [
-      `${lostGenerated.length} generated cue(s) are in the committed ledger but missing from public/:`,
+      `${lostLocal.length} locally produced asset(s) are in the committed ledger but missing from public/:`,
       "",
-      ...lostGenerated.map(
-        (a) => `  ${a.src}  ${a.bytes} bytes  ${a.durationSec}s  sha256 ${a.sha256}`,
+      ...lostLocal.map(
+        (a) => `  ${a.src}  ${a.bytes} bytes  ${a.durationSec ?? "-"}s  [${a.provenance}]  sha256 ${a.sha256}`,
       ),
       "",
-      "These have no durable copy anywhere and cannot be reproduced: re-running",
-      "scripts/generate-sfx.mjs costs four ElevenLabs requests and returns a DIFFERENT sound,",
-      "because the prompt is deterministic but the audio is not.",
+      ...(cues.length > 0
+        ? [
+            "The generated cues have no durable copy: re-running scripts/generate-sfx.mjs costs",
+            "ElevenLabs requests and returns a DIFFERENT sound, because the prompt is deterministic",
+            "but the audio is not.",
+          ]
+        : []),
+      ...(cuts.length > 0
+        ? [
+            "The cut footage can be remade by scripts/cut-clips.mjs, but ONLY while the ~926 MB raw",
+            "takes are still on disk outside the repo. Nothing in git can rebuild them.",
+          ]
+        : []),
       "",
       "Refusing to write a ledger that silently forgets them. Restore the files, or pass",
-      "--drop-generated if dropping the cue is genuinely what you meant.",
+      "--drop-generated if dropping them is genuinely what you meant.",
     ].join("\n"),
   );
 }
-if (lostGenerated.length > 0) {
-  console.log(`  (--drop-generated) dropping ${lostGenerated.length} missing generated cue(s) from the ledger`);
+if (lostLocal.length > 0) {
+  console.log(`  (--drop-generated) dropping ${lostLocal.length} missing locally produced asset(s) from the ledger`);
 }
 
 const generatedRows = generatedNames.map((name) => {
@@ -536,6 +555,143 @@ groupSummaries.push({
   copied: stats.copied - generatedBefore.copied,
   skipped: stats.skipped - generatedBefore.skipped,
   bytes: stats.bytes - generatedBefore.bytes,
+});
+
+// ---------------------------------------------------------------------------
+// Locally cut product footage — adopted, with its provenance from cut-clips.mjs
+// ---------------------------------------------------------------------------
+//
+// `scripts/cut-clips.mjs` cuts this film's clips from the raw 1920x1080 OBS takes rather
+// than inheriting the first film's 1786x944 crop, because here the recordings are cards in
+// world space that the camera approaches, so source resolution is spent directly on screen.
+// It writes public/clips/cut-manifest.json, and that provenance is copied onto each row
+// below so a clip in the ledger is traceable to the second of the take it came from.
+//
+// Adopted the same way as generated audio, and for the same reason: verify-assets can only
+// protect what the ledger names. The raw takes live OUTSIDE the repo, so these rows are not
+// re-syncable and the tripwire above covers them.
+
+const cutManifest = (() => {
+  const f = path.join(PUBLIC_DIR, "clips", "cut-manifest.json");
+  if (!fs.existsSync(f)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(f, "utf8"));
+  } catch (err) {
+    die(`public/clips/cut-manifest.json is not valid JSON: ${String(err.message).split("\n")[0]}`);
+  }
+})();
+
+// Keyed by filename so each row can find its own provenance.
+const cutByFile = new Map();
+for (const [kind, entries] of [
+  ["clip", cutManifest?.clips],
+  ["still", cutManifest?.stills],
+]) {
+  for (const [id, e] of Object.entries(entries ?? {})) cutByFile.set(e.file, { id, kind, ...e });
+}
+
+const localBefore = { copied: stats.copied, skipped: stats.skipped, bytes: stats.bytes };
+
+/** Adopt a file already sitting in public/ — this repo made it, there is nothing to copy. */
+function adoptInPlace({ destRel, role, provenance, extra }) {
+  const dstAbs = path.join(PUBLIC_DIR, destRel);
+  const bytes = fs.statSync(dstAbs).size;
+  stats.skipped += 1;
+  stats.bytes += bytes;
+  const m = measure(role, dstAbs);
+  return {
+    id: path.basename(destRel).replace(/\.[^.]+$/, ""),
+    src: destRel,
+    role,
+    provenance,
+    bytes,
+    sha256: sha256(dstAbs),
+    width: m.width,
+    height: m.height,
+    durationSec: m.durationSec,
+    fps: m.fps,
+    ...(m.codec ? { codec: m.codec } : {}),
+    ...(m.frames !== undefined && m.frames !== null ? { frames: m.frames } : {}),
+    ...(m.hasAudioStream === undefined ? {} : { hasAudioStream: m.hasAudioStream }),
+    resolutionBound: m.resolutionBound,
+    ...extra,
+    from: null,
+  };
+}
+
+const listFiles = (dirRel, ext) => {
+  const dirAbs = path.join(PUBLIC_DIR, dirRel);
+  return fs.existsSync(dirAbs)
+    ? fs
+        .readdirSync(dirAbs, { withFileTypes: true })
+        .filter((e) => e.isFile() && e.name.toLowerCase().endsWith(ext))
+        .map((e) => e.name)
+        .sort()
+    : [];
+};
+
+const inheritedClipNames = new Set(assets.filter((a) => a.role === "clip").map((a) => path.basename(a.src)));
+const cutRows = [];
+
+for (const name of listFiles("clips", ".mp4")) {
+  if (inheritedClipNames.has(name)) continue; // staged from the source library above
+  const prov = cutByFile.get(name);
+  if (!prov) {
+    die(
+      `public/clips/${name} is not from the source library and is not in cut-manifest.json, so its ` +
+        "provenance is unknown. Every frame of product footage must be traceable to a take and an " +
+        "in-point — re-run `node scripts/cut-clips.mjs`, or delete the stray file.",
+    );
+  }
+  cutRows.push(
+    adoptInPlace({
+      destRel: `clips/${name}`,
+      role: "clip",
+      provenance: "cut",
+      extra: {
+        cut: {
+          station: prov.station,
+          takeFile: prov.takeFile,
+          startSec: prov.startSec,
+          endSec: prov.endSec,
+          sourceWindow: prov.sourceWindow,
+          handleSec: prov.handleSec,
+          crop: prov.crop,
+          supersedes: prov.supersedes,
+        },
+      },
+    }),
+  );
+}
+
+for (const name of listFiles("stills", ".png")) {
+  const prov = cutByFile.get(name);
+  if (!prov) {
+    die(
+      `public/stills/${name} is not in cut-manifest.json, so its provenance is unknown. ` +
+        "Re-run `node scripts/cut-clips.mjs`, or delete the stray file.",
+    );
+  }
+  cutRows.push(
+    adoptInPlace({
+      destRel: `stills/${name}`,
+      role: "still",
+      provenance: "cut",
+      extra: {
+        cut: { station: prov.station, takeFile: prov.takeFile, atSec: prov.atSec, crop: prov.crop },
+      },
+    }),
+  );
+}
+
+assets.push(...cutRows);
+groupSummaries.push({
+  label: "cut",
+  dest: "public/clips|stills/",
+  n: cutRows.length,
+  copied: stats.copied - localBefore.copied,
+  skipped: stats.skipped - localBefore.skipped,
+  bytes: stats.bytes - localBefore.bytes,
 });
 
 // The plan wall — 60 files, treated as one montage.
@@ -720,9 +876,12 @@ const ledger = {
     "Regenerate with `npm run sync:assets`. Verify with `npm run verify:assets` — Remotion",
     "fails SOFTLY on a missing staticFile(), so an unverified render can ship with a hole in it.",
     "",
-    "Every row carries `provenance`: \"source-library\" means the bytes came out of",
-    "../archcanvas-promo-video and a sync restores them; \"generated\" means a script in this",
-    "repo made them (the ElevenLabs cues), whose durable copy lives at repo-root audio/.",
+    "Every row carries `provenance`. \"source-library\" means the bytes came out of",
+    "../archcanvas-promo-video and a sync restores them. \"generated\" means a script in this repo",
+    "made them (the ElevenLabs cues and voiceover). \"cut\" means scripts/cut-clips.mjs cut them",
+    "from the raw OBS takes, and those rows carry a `cut` block naming the take, the in-point and",
+    "the crop. Only source-library rows can be re-synced; the rest are unrecoverable if lost, and",
+    "sync-assets refuses to write a ledger that forgets one.",
     "",
     "Shape: `assets` are individual files under public/<src>. `wall` groups 60 montage tiles",
     "under public/wall/<files[].name> (same guarantees, compact form). `sources` are raw inputs",

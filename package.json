@@ -13,6 +13,7 @@
     "lint": "tsc",
     "typecheck": "tsc",
     "sync:assets": "node scripts/sync-assets.mjs",
+    "cut:clips": "node scripts/cut-clips.mjs",
     "vo": "node --env-file=.env scripts/generate-vo.mjs",
     "vo:measure": "node scripts/measure-vo.mjs",
     "sfx": "node --env-file=.env scripts/generate-sfx.mjs",

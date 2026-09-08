@@ -9,7 +9,6 @@
  *
  * Everything here is derived from two inputs and nothing else:
  *   - `stations.ts`  — intent in seconds
- *   - `data/vo.json` — measured voice-take lengths, written by ffprobe
  *
  * If a take is missing, the station holds at `minSec` and a line goes into
  * `warnings`. Nothing is silently defaulted. `verify-timeline.mjs --strict`
@@ -17,9 +16,8 @@
  * previz timing" stays a visible fact rather than a thing somebody remembers.
  */
 
-import voJson from "./data/vo.json";
 import { STATIONS, type Station, type StationId } from "./stations";
-import { STATION_FRAMES, driftRect, type Fit, type WorldRect } from "./world";
+import { STATION_FRAMES, driftRect, worldWarnings, type Fit, type WorldRect } from "./world";
 
 /**
  * 30, because the source footage — the product screen recordings on the
@@ -28,36 +26,20 @@ import { STATION_FRAMES, driftRect, type Fit, type WorldRect } from "./world";
  */
 export const FPS = 30;
 
-/* ── voice takes ──────────────────────────────────────────────────────────── */
+/* ── warnings collector ───────────────────────────────────────────────────── */
 
-type VoTake = number | { seconds?: number; file?: string };
-type VoFile = { generatedAt?: string | null; fps?: number; takes?: Record<string, VoTake> };
-
-const VO = voJson as VoFile;
-
-const warningList: string[] = [];
-const warn = (line: string) => {
-  warningList.push(line);
-};
-
-const voSeconds = (key: string | null): number | null => {
-  if (key === null) return null;
-  const takes = VO.takes;
-  if (!takes || !Object.prototype.hasOwnProperty.call(takes, key)) {
-    warn(
-      `vo take "${key}" is missing from src/data/vo.json — station holding at its previz minSec. Run \`npm run vo\` then \`npm run vo:measure\`.`
-    );
-    return null;
-  }
-  const raw = takes[key];
-  const seconds = typeof raw === "number" ? raw : typeof raw?.seconds === "number" ? raw.seconds : null;
-  if (seconds === null || !Number.isFinite(seconds) || seconds <= 0) {
-    warn(
-      `vo take "${key}" in src/data/vo.json is not a positive number of seconds (got ${JSON.stringify(raw)}) — station holding at its previz minSec.`
-    );
-    return null;
-  }
-  return seconds;
+/**
+ * Collected here, exported as `warnings`, and never thrown.
+ *
+ * A derivation that falls back must SAY it fell back. gavigo-ire-video shipped
+ * at placeholder timing because a catch-block substituted a default and nothing
+ * recorded that it had; `verify-timeline.mjs --strict` fails while this list is
+ * non-empty, so a fallback stays a visible fact rather than a thing somebody
+ * remembers.
+ */
+const warningList: string[] = [...worldWarnings];
+const warn = (message: string): void => {
+  warningList.push(message);
 };
 
 /* ── station lengths ──────────────────────────────────────────────────────── */
@@ -66,8 +48,6 @@ export type TimelineStation = {
   id: StationId;
   index: number;
   station: Station;
-  /** Measured take length, or null when the film is still at previz timing. */
-  voSec: number | null;
   startSec: number;
   durationSec: number;
   startFrame: number;
@@ -84,18 +64,12 @@ const buildStations = (): TimelineStation[] => {
   let cursorSec = 0;
 
   STATIONS.forEach((st, index) => {
-    const voSec = voSeconds(st.vo);
+    const durationSec = st.holdSec;
 
-    let durationSec = st.minSec;
-    if (voSec !== null) {
-      const needed = voSec + st.leadInSec + st.tailSec;
-      durationSec = Math.max(st.minSec, needed);
-      if (durationSec > st.maxSec) {
-        warn(
-          `station "${st.id}" needs ${needed.toFixed(2)}s (vo ${voSec.toFixed(2)} + lead ${st.leadInSec} + tail ${st.tailSec}) but maxSec is ${st.maxSec} — clamped, so the tail is eaten. Shorten the line or raise maxSec.`
-        );
-        durationSec = st.maxSec;
-      }
+    if (st.leadInSec + st.tailSec >= durationSec) {
+      warn(
+        `station "${st.id}" is ${durationSec}s but spends ${st.leadInSec}s arriving and ${st.tailSec}s settling — there is no time left in the middle for anything to happen.`
+      );
     }
 
     const durationInFrames = Math.round(durationSec * FPS);
@@ -116,7 +90,6 @@ const buildStations = (): TimelineStation[] => {
       id: st.id,
       index,
       station: st,
-      voSec,
       startSec: cursorSec,
       durationSec,
       startFrame: cursorFrame,
@@ -174,24 +147,40 @@ const ramp = (v: number, a: number, b: number, from: number, to: number): number
 };
 
 /**
+ * 0..1 across a station's HOLD — the part after the camera has arrived.
+ *
+ * Not `progressInStation`, and the difference is the whole bug: a fade keyed
+ * to the station would start during the lead-in, while the camera is still
+ * travelling and has not yet pulled out to the scale that makes the fade
+ * unreadable. Derived from `arriveFrame`, so changing a station's `leadInSec`
+ * moves its fade windows with it.
+ */
+const holdProgress = (id: StationId, frame: number): number => {
+  const s = byId[id];
+  const span = Math.max(1, s.endFrame - s.arriveFrame);
+  const p = (frame - s.arriveFrame) / span;
+  return p < 0 ? 0 : p > 1 ? 1 : p;
+};
+
+/**
  * An object's opacity on a frame.
  *
- * Objects do not appear and disappear; they fade, and always while the camera
- * is somewhere else — `world.ts` picked each `fadeOutAt` / `fadeInAt` station
- * precisely so the fade happens off-frame. The windows are inset from the
- * station edges so a fade never collides with the camera arriving.
+ * Exactly two objects in this world ever change opacity, and both do it during
+ * `wall`'s hold, where they are thumbnails in all four formats — see
+ * FADE_INVISIBLE_PX in `world.ts`, which `verify-timeline.mjs` measures against
+ * every frame of every window in every format.
  *
- * Derived here rather than in `Film.tsx` so that `verify-timeline.mjs` can
- * skip objects that are invisible when it walks the raster-upscale bound —
- * otherwise the gate flags a blow-up nobody can see.
+ * Derived here rather than in `Film.tsx` so the gate and the film read one
+ * implementation. The gate also uses it to skip invisible objects when it
+ * walks the raster bound.
  */
 export const objectOpacityAtFrame = (
   obj: { fadeInAt: string | null; fadeOutAt: string | null },
   frame: number
 ): number => {
   let o = 1;
-  if (obj.fadeInAt) o *= ramp(progressInStation(obj.fadeInAt as StationId, frame), 0.1, 0.6, 0, 1);
-  if (obj.fadeOutAt) o *= ramp(progressInStation(obj.fadeOutAt as StationId, frame), 0.15, 0.7, 1, 0);
+  if (obj.fadeInAt) o *= ramp(holdProgress(obj.fadeInAt as StationId, frame), 0.1, 0.8, 0, 1);
+  if (obj.fadeOutAt) o *= ramp(holdProgress(obj.fadeOutAt as StationId, frame), 0.1, 0.8, 1, 0);
   return o;
 };
 
@@ -287,7 +276,6 @@ export const describe = (): string => {
       String(s.startFrame).padStart(6),
       String(s.durationInFrames).padStart(6),
       String(s.arriveFrame).padStart(7),
-      (s.voSec === null ? "previz" : s.voSec.toFixed(2)).padStart(7),
       s.station.groundStop.toFixed(2).padStart(6),
     ];
     return "  " + cells.join(" ");
@@ -301,8 +289,28 @@ export const describe = (): string => {
       "start".padStart(6),
       "frames".padStart(6),
       "arrive".padStart(7),
-      "vo s".padStart(7),
       "ground".padStart(6),
     ].join(" ");
   return [head, ...rows, "", `  totalFrames ${totalFrames}  (${totalSeconds.toFixed(2)}s @ ${FPS}fps)`].join("\n");
 };
+
+/* ── the bed's envelope ───────────────────────────────────────────────────── */
+
+/**
+ * The music fade, in seconds, converted here because this is the only file that
+ * is allowed to know what a frame is (CLAUDE.md law 3).
+ *
+ * There is no fade-in: `tools/prepare-bed.ps1` bakes a 0.35s one into the file
+ * so the cut never starts on a discontinuity, and a second fade on top would
+ * just make the opening limp.
+ *
+ * The fade-out is 2.4s and it is doing real work. The window was chosen to put
+ * the track's biggest energy jump (x3.54, at 99.80s of the source) on the
+ * camera's reversal at 62.5s. That is the right trade, but it means the window
+ * ends while the track is still at full energy -- there is no natural ending
+ * inside it. So the ending is made here, honestly, rather than pretended at by
+ * hunting for a quieter window that would have put the arrival in the wrong
+ * place.
+ */
+export const BED_FADE_OUT_SEC = 2.4;
+export const BED_FADE_OUT_FRAMES = Math.round(BED_FADE_OUT_SEC * FPS);
