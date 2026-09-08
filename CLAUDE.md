@@ -155,6 +155,14 @@ cost real time somewhere. Do not rediscover them.
 ode_modules*" }`
   and kill what it finds. Filter on the project path so the user's own browser is
   never in the list.
+- **Never put `will-change: transform` on the camera layer.** It is the reflex
+  on a transformed element and it is catastrophic here: the world's children span
+  17,800 x 18,305 units, so at the tightest station that layer is 22,250 x 22,881
+  CSS pixels, and the hint asks Chrome to allocate backing store for all of it.
+  Renders were killed for memory with 5.4 GB free. The tell was that freeing more
+  memory did not help — **when more memory does not help, the problem is not
+  memory.** The hint is right on a small element that moves; it is wrong on a
+  world.
 - **Sixty `<Img>` elements in one object will not render.** Remotion registers a
   `delayRender` per image and never finishes the queue; it fails naming an
   arbitrary-but-deterministic one, which reads like a corrupt file and is not.
