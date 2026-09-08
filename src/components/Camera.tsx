@@ -49,7 +49,18 @@ export const Camera: React.FC<{
           // under the origin, scale about it, then move it to the middle of the
           // frame. A zero-size layer, so nothing here can lay anything out.
           transform: `translate(${layout.width / 2}px, ${layout.height / 2}px) scale(${cam.scale}) translate(${-cam.cx}px, ${-cam.cy}px)`,
-          willChange: "transform",
+          // NO `willChange: transform` HERE, deliberately.
+          //
+          // It is the reflex on a transformed layer and it is catastrophic on
+          // this one. The world's children span 17,800 x 18,305 units, which at
+          // the tightest station's 1.25x is a layer of 22,250 x 22,881 CSS
+          // pixels. `will-change` promotes that to a composited layer and asks
+          // Chrome to allocate backing store for ALL of it, most of which no
+          // frame can ever see. Renders were killed for memory with 5.4 GB free.
+          //
+          // Without the hint Chrome rasterises what is actually on screen. The
+          // hint is right on a small element that moves; it is wrong on a
+          // world.
         }}
       >
         {children}

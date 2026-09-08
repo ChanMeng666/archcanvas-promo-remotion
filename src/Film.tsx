@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import { FONT } from "./fonts";
-import { useLayout } from "./layout";
+import { cameraAt, useLayout } from "./layout";
 import { paletteAt } from "./palette";
 import type { StationId } from "./stations";
 import {
@@ -15,7 +15,7 @@ import {
   totalFrames,
   BED_FADE_OUT_FRAMES,
 } from "./timeline";
-import { WORLD_OBJECTS } from "./world";
+import { WORLD_OBJECTS, rect as worldRect, rectsOverlap } from "./world";
 import { Camera } from "./components/Camera";
 import { type WorldObjectRegistry } from "./components/primitives";
 import { BriefLine } from "./components/BriefLine";
@@ -79,6 +79,15 @@ export const Film: React.FC = () => {
   const palette = paletteAt(groundStopAtFrame(frame));
   const here = stationAtFrame(frame);
 
+  // The camera, resolved once here so the cull below and `<Camera>` cannot
+  // disagree about where it is pointing.
+  const framings = useMemo(
+    () => cameraKeyframes.map((k) => layout.viewportFit(k.rect, k.fit)),
+    [layout]
+  );
+  const cam = cameraAt(cameraKeyframes, framings, frame);
+  const viewport = worldRect(cam.cx, cam.cy, layout.width / cam.scale, layout.height / cam.scale);
+
   return (
     <AbsoluteFill
       style={{
@@ -91,6 +100,15 @@ export const Film: React.FC = () => {
     >
       <Camera keyframes={cameraKeyframes} layout={layout} frame={frame}>
         {WORLD_OBJECTS.map((obj) => {
+          // Cull anything the camera cannot see.
+          //
+          // Every world object used to stay mounted for the whole film, which
+          // is how sixty wall tiles came to be decoded from frame 0 for a beat
+          // that starts at 52.5s. Opacity bounds fixed that one object; this
+          // fixes the class. `verify-timeline.mjs` already computes exactly
+          // this overlap to decide what it is allowed to check, so the film and
+          // its gate now agree on what "on screen" means.
+          if (!rectsOverlap(viewport, obj.rect)) return null;
           const Component = REGISTRY[obj.id];
           const opacity = objectOpacityAtFrame(obj, frame);
           if (opacity <= 0.001) return null;
