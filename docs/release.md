@@ -36,9 +36,20 @@ It exits non-zero on a failing second. It is a **screening test against WCAG SC 
 not a certification and not PEAT; its own output says so, and the release notes should not
 claim more than it measured.
 
-Last measured on the landscape master (2026-09-09): 2250 frames, largest single
-frame-to-frame luminance swing **5.2%** at 36.30s against a 10% threshold, **zero**
-transitions over threshold in the whole film, busiest second 0 flash pairs.
+Measured on 2026-09-09, all formats, 2190 frames each (73.00s at 30fps). Every one
+passes with **zero** transitions over the 10% threshold in the whole film:
+
+| format | largest single frame-to-frame swing | at |
+|---|---|---|
+| landscape 1920x1080 | **5.2%** | 36.30s |
+| portrait 1080x1350 | **2.4%** | 36.33s |
+| vertical 1080x1920 | **1.6%** | 36.33s |
+| square 1080x1080 | **3.1%** | 36.30s |
+
+**That spread is the reason this is run per format rather than once.** It is the same
+film at the same frame, and the measure differs threefold — the tall frames simply hold
+more dark ground and less bright drawing. A whole-frame luminance number taken on one
+composition is not evidence about another.
 
 ## 2. Check what is actually on disk
 
