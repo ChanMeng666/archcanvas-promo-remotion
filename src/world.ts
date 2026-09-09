@@ -23,9 +23,9 @@
  *                Directly underneath the rendering, at the origin, the
  *                sentence that produced all of it.
  *   y ~=  2400   the review pin — the near edge of the session cluster
- *   y ~=  4300   the SESSION cluster — the real filmed run: plan-hero and the
+ *   y ~=  4000   the SESSION cluster — the real filmed run: plan-hero and the
  *                product recordings. How you work with it.
- *   y ~= 12600   the plan wall — 60 rasters, the furthest-out beat
+ *   y ~= 11800   the plan wall — 60 rasters, the furthest-out beat
  *
  * ── Two clusters, and why the pin is not on the showcase drawing ───────────
  *
@@ -43,8 +43,8 @@
  * facts -> note -> lineage -> wall are one continuous outward move with no
  * turn in it. And `LINEAGE.fixedDrawing` puts plan-hero — the same session
  * later, with the Bathroom and the Hall the c06 state lacks — directly BELOW
- * the pin, so the pull-back reveals the named defect fixed. No copy points at
- * it, and none should.
+ * the pin, at 1900 units the largest object in the beat, so the pull-back
+ * lands on the named defect fixed. No copy points at it, and none should.
  *
  * The sentence sits AT the origin, underneath the rendering, from frame 0.
  * That is the whole trick of station 7: the camera does not cut back to a
@@ -334,6 +334,28 @@ export const WALL_GRID_W = packed.gridW;
 export const WALL_GRID_H = packed.gridH;
 
 /**
+ * One state of the session's drawing, as a sheet.
+ *
+ * plan-hero.svg's viewBox is `-8850 -4140 29700 21000` — A-series, so the
+ * sheet is 1:√2 and `SHEET_H` is derived from it rather than eyeballed.
+ * `InlineSvgLayer` fits `xMidYMid meet`, so a box on any other ratio just
+ * letterboxes the drawing inside itself.
+ */
+const SHEET_W = 1900;
+const SHEET_H = Math.round((SHEET_W * 21000) / 29700); // 1343
+
+/**
+ * One product screen recording. 1786:944 native, kept exact.
+ *
+ * DELIBERATELY SMALLER THAN THE SHEET, and that is the composition rather
+ * than a budget: at 1500 the recordings were the largest things in the beat
+ * and the fixed drawing — the payoff — was one of the smallest, so the eye
+ * had nowhere to go. The sheet is now 2.1x a clip's width.
+ */
+const CAPTURE_W = 900;
+const CAPTURE_H = Math.round((CAPTURE_W * 944) / 1786); // 476
+
+/**
  * The session cluster's body: the real filmed run, as world-space cards.
  *
  * Eight recordings are staged (c05, c06, c07, c08, c10, c11, c13, c15) — all
@@ -342,17 +364,29 @@ export const WALL_GRID_H = packed.gridH;
  * reference it. c06 belongs to the pin above, not to the trail.
  *
  * Card sizes live here rather than inside `LineageTrail` because the camera's
- * upscale bound has to know how wide one recording is displayed — the clips
- * are the widest rasters in the film.
+ * upscale bound has to know how wide one recording is displayed.
+ *
+ * ── Why the box is 4560 x 2000 and not something rounder ──────────────────
+ *
+ * The `lineage` framing is `padRect(unionRect(SESSION_PIN, SESSION_TRAIL),
+ * 200)`, so this box IS the shot. Every unit of it that holds nothing is a
+ * unit the camera has to pull back far enough to include, and the beat's
+ * magnification is the first casualty: the trail used to be 6000 x 2600 with
+ * its content flung into three corners, and the landscape camera sat at scale
+ * 0.249 to hold the emptiness. The same content packed into 4560 x 2000 sits
+ * at 0.293, which is where the fixed drawing goes from 274 px wide to 556.
+ *
+ * So: keep the box tight to the content. If a card moves outward, pull the
+ * box in behind it.
  */
 export const LINEAGE = {
-  /** One product screen recording. 1786:944 native, kept exact. */
-  captureW: 1500,
-  captureH: 793,
-  /** One earlier version of the session's drawing. SVG — no resolution ceiling. */
-  versionW: 1100,
-  versionH: 780,
-  gap: 120,
+  captureW: CAPTURE_W,
+  captureH: CAPTURE_H,
+  /** One state of the session's drawing. SVG — no resolution ceiling. */
+  versionW: SHEET_W,
+  versionH: SHEET_H,
+  /** Air between the sheet's right edge and the first recording. */
+  gap: 200,
   /**
    * plan-hero.svg's slot, in coordinates local to the trail's own box.
    *
@@ -364,9 +398,13 @@ export const LINEAGE = {
    * drawing enters frame under the sentence naming the defect. It lands for
    * the people who look, which is the right amount.
    *
+   * `x` is the one number here that is not free: `SESSION_TRAIL.cx` is chosen
+   * so that `trailLeft + x + w/2` lands exactly on `SESSION_PIN.cx`, and
+   * `verify-timeline.mjs` fails at 80 units of drift. Move one, move the other.
+   *
    * Order the rest of the trail around it however reads best.
    */
-  fixedDrawing: { x: 1650, y: 230, w: 1100, h: 780 },
+  fixedDrawing: { x: 560, y: 440, w: SHEET_W, h: SHEET_H },
 
   /**
    * Earlier states of the same drawing, stacked behind the one that survived.
@@ -375,14 +413,38 @@ export const LINEAGE = {
    * They are drawn as empty sheets, not as real earlier plans, and that is
    * deliberate: we do not have those intermediate exports, and inventing them
    * would be mocking up the one thing the film is arguing you can trust.
+   *
+   * Same size as the sheet in front of them, and one step of 250 x 190 apart:
+   * an earlier state of a drawing is the same sheet, so a ghost that is a
+   * different size reads as a different document rather than as a previous
+   * version. All that shows is an L of paper up the top-left edge.
+   *
+   * Nearest first — the array is painted in order, so `ghosts[1]` is the
+   * furthest back and is drawn last, over `ghosts[0]`. At 7% and 10% opacity
+   * on a graphite ground that is invisible either way; do not "fix" it by
+   * reversing the array, which would put the oldest sheet in front.
    */
   ghosts: [
-    { x: 1500, y: 120, w: 1100, h: 780 },
-    { x: 1350, y: 10, w: 1100, h: 780 },
+    { x: 310, y: 250, w: SHEET_W, h: SHEET_H },
+    { x: 60, y: 60, w: SHEET_W, h: SHEET_H },
   ],
 
   /**
    * The conversation, as world-space cards.
+   *
+   * ONE CASCADE, not three corners. Each recording is one step down and to
+   * the right of the one before it (470 x 380, against a 900 x 476 card), so
+   * they overlap by about a tenth at the corner and read as a thread stacking
+   * forward in time — which is what they are — instead of as three unrelated
+   * screens parked at the edges of the box. Array order is paint order, so
+   * each new card lands ON the one before it. Keep it that way.
+   *
+   * The cascade also has to stay clear of `cardLineage`, which `cardIn`
+   * places in the bottom-right of this station's framing. That card is a
+   * quarter of the frame's height up from the bottom and a sixth of its width
+   * in from the right; the cascade ends 70 units above it and the sheet's
+   * right edge clears its left edge by 169. Both are checked by eye on a
+   * still, not by a gate — if you move a card here, look at frame 1420.
    *
    * `startFrom` is in FRAMES at 30fps and skips each cut's 3s handle plus
    * whatever lead-in the moment needs. Every clip is silent — the ledger
@@ -390,14 +452,14 @@ export const LINEAGE = {
    * composition, so they play without judder or resampling.
    */
   clips: [
-    { file: "lineage-instruction.mp4", startFrom: 420, x: 3120, y: 60, w: 1500, h: 793 },
-    { file: "lineage-morph.mp4", startFrom: 750, x: 3120, y: 1120, w: 1500, h: 793 },
-    { file: "lineage-shrink.mp4", startFrom: 210, x: 240, y: 1120, w: 1500, h: 793 },
+    { file: "lineage-instruction.mp4", startFrom: 420, x: 2660, y: 40, w: CAPTURE_W, h: CAPTURE_H },
+    { file: "lineage-morph.mp4", startFrom: 750, x: 3130, y: 420, w: CAPTURE_W, h: CAPTURE_H },
+    { file: "lineage-shrink.mp4", startFrom: 210, x: 3600, y: 800, w: CAPTURE_W, h: CAPTURE_H },
   ],
 
   /** The trail's own box, so a component can convert its local coordinates. */
-  w: 6000,
-  h: 2600,
+  w: 4560,
+  h: 2000,
 } as const;
 
 /**
@@ -444,7 +506,12 @@ const SHOWCASE_SHEET = rect(2388, 0, 2400, 1700);
 // 1500 x 834 is 1.799 — the captured card's own 1828:1016 aspect, so the real
 // still drops in without a letterbox or a crop.
 const SESSION_PIN = rect(2100, 2400, 1500, 834);
-const SESSION_TRAIL = rect(2900, 4300, 6000, 2600);
+// cx 2870 is DERIVED, not chosen: the box is 4560 wide, so its left edge is at
+// 590, and 590 + LINEAGE.fixedDrawing.x (560) + SHEET_W/2 (950) = 2100 — the
+// pin's own centre line, to the unit. verify-timeline.mjs fails at 80 units of
+// drift, so if the sheet moves inside the box, this number moves with it.
+// cy 4000 puts the box's top edge at 3000, 183 below the pin's bottom.
+const SESSION_TRAIL = rect(2870, 4000, LINEAGE.w, LINEAGE.h);
 
 /** The lowest thing above the wall. The wall's position is derived from it. */
 const SESSION_BOTTOM = bottomOf(SESSION_TRAIL);
@@ -576,7 +643,7 @@ const BASE_OBJECTS: readonly WorldObject[] = [
     rasterWorldW: LINEAGE.captureW,
     fadeOutAt: null,
     fadeInAt: null,
-    note: "The session cluster: plan-hero in the slot directly under the pin, plus the c07/c08/c10/c11 recordings. Its own rect sets where LINEAGE.fixedDrawing lands.",
+    note: "The session cluster: plan-hero large in the slot directly under the pin, with the three recordings cascading away from it to the right. Its own rect IS the lineage framing (unioned with the pin), so its emptiness costs magnification — keep it tight to the content.",
   },
   {
     id: "planWall",

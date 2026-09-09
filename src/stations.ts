@@ -151,7 +151,15 @@ export const STATIONS: readonly Station[] = [
   },
   {
     id: "mark",
-    holdSec: 8.0,
+    // 6.0, down from 8.0. A full stop is right after sixty-seven seconds of
+    // movement; eight seconds of a static frame is a different thing, which is
+    // waiting. The 2.0s lead-in carries the last camera move, and the end
+    // card's reveal ladder — wordmark, then the five terms lines, then the URL
+    // at a delay of 34 over a 24-frame spring — is finished 58 frames after
+    // the camera settles. That leaves 62 frames, just over two seconds, of
+    // genuinely still frame to end on. Anything under about 4.0s here would
+    // start eating the ladder rather than the hold.
+    holdSec: 6.0,
     leadInSec: 2.0,
     tailSec: 1.0,
     groundStop: 4,

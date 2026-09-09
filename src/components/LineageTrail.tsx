@@ -23,11 +23,29 @@ import type { WorldObjectComponent } from "./primitives";
  * look, that is the right amount — see docs/decisions.md D1. Resist every
  * instinct to add a label, an arrow, or a highlight.
  *
+ * ── Which is why it is the biggest thing here ─────────────────────────────
+ *
+ * A payoff nothing may point at has to be pointed at by the composition, or it
+ * is not a payoff. The sheet is 1900 world units against 900 for a recording,
+ * it sits on the pin's centre line, and the ghosts stack behind it rather than
+ * beside it — so the beat has one object at its centre and everything else is
+ * subordinate to it. The first cut of this trail gave the recordings 1500 and
+ * the sheet 1100, flung all five to the corners of a 6000-unit box, and the
+ * result read but did not land: everything was small and the eye had nowhere
+ * to go. If you find yourself growing a recording, grow the sheet first.
+ *
  * ── The recordings are cards, never full-bleed ────────────────────────────
  *
  * Every clip sits in a bordered card with a hairline. They are silent
  * (`hasAudioStream: false` on every row in the ledger) and 30fps, matching the
  * composition, so they play without judder or resampling.
+ *
+ * They are laid out as ONE CASCADE stepping down and to the right, overlapping
+ * by roughly a tenth at the corner, so three screens read as one conversation
+ * stacking forward in time. `LINEAGE.clips` is paint order as well as reading
+ * order — a later card lands on the one before it — and the opacity stagger
+ * below runs in the same order, so the thread assembles top-first. Reversing
+ * either one puts the newest moment at the bottom of the pile.
  */
 export const LineageTrail: WorldObjectComponent = ({
   width,
