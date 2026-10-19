@@ -10,7 +10,11 @@
 
 ### ArchCanvas «Zoom Out»
 
-<!-- FILM: archcanvas-zoom-out · 16:9 · 73 s — Chan uploads the video here in GitHub's web editor -->
+
+
+https://github.com/user-attachments/assets/75229949-2154-4575-b9c8-b47f2aa727e5
+
+
 
 ▶ Watch on YouTube: https://youtu.be/KuCYju-jY0w
 
