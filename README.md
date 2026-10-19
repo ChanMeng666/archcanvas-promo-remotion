@@ -12,6 +12,8 @@
 
 <!-- FILM: archcanvas-zoom-out · 16:9 · 73 s — Chan uploads the video here in GitHub's web editor -->
 
+▶ Watch on YouTube: https://youtu.be/KuCYju-jY0w
+
 16:9, 9:16, 4:5 and 1:1. No voiceover: text set in the canvas and one music bed carry it.
 
 ## How it's made
