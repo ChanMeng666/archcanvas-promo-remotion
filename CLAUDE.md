@@ -42,8 +42,8 @@ else — `capture/verify-timeline.mjs` greps for it and fails.
 
 ## Copy law — read before writing a single word
 
-The authority is `../archcanvas-growth`: `strategy/positioning.md`,
-`investor/founder-brief.md` §7 (bans 1–14), `marketing/content/voice.md`
+The authority is the product's private positioning notes: `strategy/positioning.md`,
+`founder-brief.md` §7 (bans 1–14), `marketing/content/voice.md`
 (banned words), `strategy/category.md` §6 (the clearance table).
 
 **A promo video is the consumer room. Layer 1 and Layer 2 only, never Layer 3.**
@@ -55,7 +55,7 @@ Five that will bite:
   names "websites (including URLs and metadata)" specifically) and NZ Registered
   Architects Act 2005 s.7 (to NZ$10,000 — and NZ is the law the Terms chose).
   Write **"AI architectural designer"**. The product repo already enforces
-  `/\bAI architect(?!ural)/i`; **the growth repo has not been updated**, so
+  `/\bAI architect(?!ural)/i`; **the positioning notes have not been updated**, so
   `positioning.md`, `messaging-library.md` (tagline #7, all boilerplate, the
   founder bio) and `category.md` still contain the banned phrase. Do not copy
   from them verbatim.

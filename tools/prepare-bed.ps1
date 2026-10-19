@@ -7,7 +7,7 @@
 # lives in src/data/vo.json. The duck belongs in the composition, which reads
 # that file. This script's whole job is to hand the composition a clean bed.
 #
-# Ported from ../she-sharp-promo-video-event-lesmills-03-september-2026/tools/
+# Ported from an earlier promo-film repo's tools/
 # prepare-bed.ps1, with two things taken from ../archcanvas-promo-video/scripts/
 # prepare-bed.mjs because they were better there:
 #

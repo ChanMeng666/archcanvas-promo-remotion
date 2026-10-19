@@ -8,7 +8,7 @@ protected professional title in two jurisdictions. Its positioning went through 
 rounds and produced a standing banned-claims card (B1–B14), a banned-words list, and — in
 the 2026-09-01 external risk audit — a fifteenth ban that is not on that card and is a
 legal one. Every one of those is grounded in a specific property of the shipped code or a
-specific statute. Several live assets, **and several files in the growth repo itself**,
+specific statute. Several live assets, **and several files in the positioning notes itself**,
 still carry wording that is now banned, so "copy what we already say" is not a safe
 default. A line that sounds better and clears nothing is a regression, not an improvement.
 
@@ -27,10 +27,10 @@ does not pass by having nothing to check against.
 the two drawings and the one filmed session it shows.
 
 Sources, in the order they were read: `archcanvas-promo-remotion/CLAUDE.md` §Copy law ·
-`archcanvas-growth/investor/founder-brief.md` §7 · `archcanvas-growth/strategy/positioning.md` ·
-`archcanvas-growth/strategy/category.md` §6 · `archcanvas-growth/marketing/content/voice.md` ·
-`archcanvas-growth/marketing/copy/messaging-library.md` ·
-`archcanvas-growth/research/red-team/2026-09-01-external-risk-audit.md` §1.10 ·
+`positioning-notes/founder-brief.md` §7 · `positioning-notes/strategy/positioning.md` ·
+`positioning-notes/strategy/category.md` §6 · `positioning-notes/marketing/content/voice.md` ·
+`positioning-notes/marketing/copy/messaging-library.md` ·
+`positioning-notes/external-risk-audit.md` §1.10 ·
 `archcanvas/tests/marketingNoCode.test.ts` · and the shipped product copy on archcanvas.uk.
 
 ---
@@ -87,7 +87,7 @@ One string on screen is not ours to author, and must not be paraphrased.
 
 ## The bans, walked one by one
 
-Bans 1–14 are the standing card in `investor/founder-brief.md` §7. **Ban 15 is not on that
+Bans 1–14 are the standing card in `founder-brief.md` §7. **Ban 15 is not on that
 card**, is newer, and is the only one with a fine attached.
 
 | # | The ban | How this film clears it |
@@ -106,7 +106,7 @@ card**, is newer, and is the only one with a fine attached.
 | **B12** | Any claim that the gate blocks a defective plan | **The other live risk.** `SHIP_RESIDUAL = true`: out of budget with defects left, it charges and ships as `quality: "residual"`. The film's answer is station `note`, which says the opposite of blocking — it says what survived is written down for you. Nothing says `before you see it` or `nothing ships`. |
 | B13 | "250 visitors", or any Cloudflare figure as an exact count | **No traction number appears on screen or in the voiceover, ever.** Every figure available is either zero or unquotable without its n. The gate carries needles for the specific ones. |
 | B14 | "we have no visitor data" | Not applicable; the film makes no data claim of any kind. |
-| **B15** | **`AI architect` — the protected title.** *Not on the B1–B14 card.* | **Never used, and mechanically impossible to reintroduce.** UK Architects Act 1997 s.20 bars carrying on business under any title containing the word unless registered — fine to **£2,500 per offence** — and ARB's Misuse of Title Policy names *"websites (including URLs and metadata)"* as a breach vector. NZ Registered Architects Act 2005 s.7 does the same when building design services are involved, to **NZ$10,000**, and **NZ is the law ArchCanvas's own Terms choose**. The approved substitute is **`AI architectural designer`**, which ARB has said in terms it cannot investigate. The gate carries the product repo's own needle `/\bAI architect(?!ural)/i` as a **regex**, so the substitute passes and the bare title fails. Source: `archcanvas-growth/research/red-team/2026-09-01-external-risk-audit.md` §1.10; enforced in `archcanvas/tests/marketingNoCode.test.ts`. |
+| **B15** | **`AI architect` — the protected title.** *Not on the B1–B14 card.* | **Never used, and mechanically impossible to reintroduce.** UK Architects Act 1997 s.20 bars carrying on business under any title containing the word unless registered — fine to **£2,500 per offence** — and ARB's Misuse of Title Policy names *"websites (including URLs and metadata)"* as a breach vector. NZ Registered Architects Act 2005 s.7 does the same when building design services are involved, to **NZ$10,000**, and **NZ is the law ArchCanvas's own Terms choose**. The approved substitute is **`AI architectural designer`**, which ARB has said in terms it cannot investigate. The gate carries the product repo's own needle `/\bAI architect(?!ural)/i` as a **regex**, so the substitute passes and the bare title fails. Source: `positioning-notes/external-risk-audit.md` §1.10; enforced in `archcanvas/tests/marketingNoCode.test.ts`. |
 
 ### Standing rules, also enforced
 
@@ -115,7 +115,7 @@ card**, is newer, and is the only one with a fine attached.
 | **Do not open on "AI"** | Station `interior` opens on the room and the person: *"This room doesn't exist yet."* The word "AI" is never spoken in the film at all. Documented anti-AI sentiment in the exact communities the ICP gathers in makes it a liability as an opener, not a hook (positioning.md do-NOT #2). |
 | **No bare dollar price on screen** | None appears. USD pricing rendered on a `.uk` surface is DMCCA drip-pricing exposure, so the gate fails on any `$`-plus-digit. Tagline #8 (`Your first real floor plan, before the $2,000 bill.`) is cleared copy elsewhere and is deliberately **not used here**. |
 | **Every rendering carries the product's own AI-generated pill** | A composition requirement, not a copy one, but it is a legal deadline: EU AI Act Art 50 transparency, grace period ending **2026-12-02**. Stations `interior` and `pair` are the two that show a rendering. The pill is the product's own, captured with the image — it is not drawn by this repo. |
-| **English only** | The growth repo bans CJK outright. The gate fails on any CJK codepoint in script or component copy. |
+| **English only** | The positioning notes ban CJK outright. The gate fails on any CJK codepoint in script or component copy. |
 | **Nothing on screen is mocked up** | CLAUDE.md law 2. Both strings in this film that a human or the product wrote — the c01 brief and the c06 review pin — were read off the footage frame by frame and transcribed, not retyped from a doc. The one place the doc and the footage disagreed (`110 m²` vs `110 m2`), the footage won. |
 
 ---
@@ -141,19 +141,19 @@ the product repo's own fix list):
   build-ready"** → reads as a **B3** buildability promise. The line beside it,
   `every edit is free`, is fine and is used.
 
-**The growth repository itself has not been updated for B15.** These files still contain
+**The positioning notes themselves have not been updated for B15.** These files still contain
 the banned title, and are the most dangerous source in the whole corpus precisely because
 they are the approved copy bank. **Do not quote them verbatim:**
 
-- `archcanvas-growth/strategy/positioning.md` — the **positioning statement**:
+- `positioning-notes/strategy/positioning.md` — the **positioning statement**:
   *"ArchCanvas is an AI architect that turns a plain-language brief into…"*
-- `archcanvas-growth/marketing/copy/messaging-library.md` — **approved tagline #7**
+- `positioning-notes/marketing/copy/messaging-library.md` — **approved tagline #7**
   (*"An AI architect that designs one plan — and gets it right with you."*), **all three
   product boilerplates** (25 / 50 / 100 words), and **both founder bios** (50 / 100 words).
-- `archcanvas-growth/strategy/category.md` §6 — the clearance table's own row
+- `positioning-notes/strategy/category.md` §6 — the clearance table's own row
   *"An AI architect" (in boilerplate)*, still marked **Clear** on a B5 check alone. That
   verdict predates the 2026-09-01 audit and is now wrong; the row needs re-deciding in the
-  growth repo. This film does not rely on it.
+  positioning notes. This film does not rely on it.
 
 Where any of those lines is otherwise useful, the fix is the same one word:
 **`AI architectural designer`**, which the product has already shipped on `/about`,

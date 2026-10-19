@@ -12,11 +12,11 @@
  * the bed sounds like it starts rather than resumes) but spends most of its
  * output on the arrangement profile and on window candidates scored by shape.
  *
- * Ported from ../she-sharp-promo-video-event-lesmills-03-september-2026/tools/
+ * Ported from an earlier promo-film repo's tools/
  * analyze-music.mjs, merged with ../archcanvas-promo-video/scripts/analyze-music.mjs.
  * Where the two disagreed:
  *
- *   - **Fractional autocorrelation lag** — taken from she-sharp. archcanvas
+ *   - **Fractional autocorrelation lag** — taken from the earlier film. archcanvas
  *     rounds the lag to whole 10ms frames, which makes several neighbouring BPM
  *     values share one lag; the curve becomes plateaus and every local peak
  *     hides. Kept the fractional interpolation.
@@ -26,9 +26,9 @@
  *     here in full because it is easy to re-take and it fails *quietly*: you
  *     get a confident number that is simply wrong.
  *
- *     she-sharp differences the raw 10ms log envelope and autocorrelates that.
+ *     the earlier film differences the raw 10ms log envelope and autocorrelates that.
  *     archcanvas first takes a ±3-frame (±30ms) mean of the log envelope and
- *     differences THAT. The first version of this port followed she-sharp,
+ *     differences THAT. The first version of this port followed the earlier film,
  *     reasoning that smoothing lowpasses exactly the periodicity the
  *     autocorrelation is looking for. Measured on the reference take
  *     (`../archcanvas-promo-video/audio/source/drafting-room-full.mp3`):
@@ -51,15 +51,15 @@
  *     and peak picking — runs on the one smoothed `flux` array. There is
  *     deliberately no second, unsmoothed copy to reach for by accident.
  *   - **Peak picking with a musical minimum gap** — taken from archcanvas.
- *     she-sharp has no onset list at all; this film needs one, because "the
+ *     the earlier film has no onset list at all; this film needs one, because "the
  *     single strongest accent in the take" is the thing that has to land at 72s.
- *   - **Octave disambiguation by phase lock** — taken from she-sharp, and it is
+ *   - **Octave disambiguation by phase lock** — taken from the earlier film, and it is
  *     the most valuable thing in either file. Autocorrelation peaks at the bar
  *     as readily as at the beat, so its raw maximum is often a half or a
  *     quarter of the true tempo. See the block that prints the phase-lock table.
  *
  *     **The octave-family restriction is NOT inherited — it is new here.**
- *     she-sharp printed the table against five hand-typed probes and left a
+ *     the earlier film printed the table against five hand-typed probes and left a
  *     human to read it. This port derives the probes, which makes it general,
  *     and that generality introduced a failure the original could not have: a
  *     tempo unrelated to the beat can score a low drift by luck and win an
@@ -113,7 +113,7 @@ const HOP = 80; // samples = 10ms
 
 // -vn matters: a SUNO export carries an embedded mjpeg cover-art stream, and
 // without it ffmpeg will happily try to make sense of the picture.
-// Piped to stdout rather than through a temp file — she-sharp writes a .raw to
+// Piped to stdout rather than through a temp file — the earlier film writes a .raw to
 // $TEMP and unlinks it; a 200s take at 8kHz mono is only ~3MB, so the pipe is
 // simpler and leaves nothing behind if the process dies.
 const dec = spawnSync(
@@ -222,7 +222,7 @@ const combScore = (bpm, t0, t1) => {
   return { score: bestSum, phase: bestPhase / 100 };
 };
 
-// Derive the probe list instead of hand-typing it — she-sharp hard-coded five
+// Derive the probe list instead of hand-typing it — the earlier film hard-coded five
 // values that only meant anything for that one track.
 //
 // Two sets, and the distinction matters. The *octave family* of the raw best
@@ -304,7 +304,7 @@ const rmsBetween = (t0, t1) => {
 /*
  * Two scorings, because the two reference tools each answered half the question.
  *
- * (a) accent-led — she-sharp/archcanvas both do this: for every strong onset,
+ * (a) accent-led — the earlier film and archcanvas both do this: for every strong onset,
  *     the window that puts it at LAND seconds into the cut.
  * (b) shape-led — this film's actual requirement. Score a window on: how quiet
  *     its first 10s are, how much louder the LAND moment is than the open, and

@@ -1,47 +1,43 @@
+<div align="center">
+
 # ArchCanvas «Zoom Out»
 
-A silent [Remotion](https://remotion.dev) film for [ArchCanvas](https://archcanvas.uk): one continuous zoom across the infinite canvas, told backwards. Four aspect ratios out of one edit. English, carried by text in world space and one music bed.
+**A silent film for [ArchCanvas](https://archcanvas.uk), the AI architectural designer: one continuous zoom across the product's infinite canvas, told backwards, made in code with Remotion and cut into four aspect ratios from one edit.**
 
-This is deliberately the **second** film. The first lives in [`archcanvas-promo-video`](https://github.com/ChanMeng666/archcanvas-promo-video) (HyperFrames, 92s, centred text cards, chronological demo). Do not port it.
+</div>
 
-| | |
-|---|---|
-| Landscape | 1920 × 1080 · YouTube / LinkedIn / the website |
-| Vertical | 1080 × 1920 · Reels / Stories / TikTok / Shorts |
-| Portrait | 1080 × 1350 · Instagram + Facebook feed |
-| Square | 1080 × 1080 · LinkedIn + Instagram feed |
-| Clock | 30 fps · ~75s (2190 frames after the end-card trim) |
+## The film
 
-Rendered masters are **GitHub Release assets**, not repository files. `.gitignore` keeps `out/*.mp4` out on purpose.
+### ArchCanvas «Zoom Out»
 
----
+<!-- FILM: archcanvas-zoom-out · 16:9 · 73 s — Chan uploads the video here in GitHub's web editor -->
 
-## If you are an agent
+16:9, 9:16, 4:5 and 1:1. No voiceover: text set in the canvas and one music bed carry it.
 
-Read **`CLAUDE.md` first.** It is the operating manual: three laws, copy bans, the station/camera model, and a "Traps already paid for" list where every entry is a defect this project actually shipped or nearly shipped.
+## How it's made
 
-Then: `docs/decisions.md` (what was deliberately not repeated) → `docs/copy-clearance.md` (every on-screen phrase) → `src/stations.ts` (intent, in seconds).
+- **One camera, one world.** Drawings, renderings and product clips are placed as objects in a single world space, and one camera move travels across them; `src/stations.ts` holds the intent in seconds and `src/timeline.ts` is the only file that does frame arithmetic.
+- **Four formats from one edit.** Each composition frames the same world differently, so nothing is cropped.
+- **Nothing on screen is mocked up.** Every drawing, rendering and number came out of the live product, and `src/data/assets.json` is the ledger of the exact bytes the film was cut from.
+- **Every word on screen is cleared:** `capture/verify-copy.mjs` fails on a phrase with no row in `docs/copy-clearance.md`, and `npm run verify:flash` screens each master for flashes (WCAG 2.3.1).
+- **Music:** one SUNO take made by Chan Meng, windowed and levelled with ffmpeg (`tools/`).
 
----
-
-## The three laws
-
-1. **Every word on screen is cleared, or it does not ship.** `capture/verify-copy.mjs` fails a phrase with no row in `docs/copy-clearance.md`.
-2. **Nothing on screen is mocked up.** Drawings, renderings and numbers came out of the live product. `src/data/assets.json` is the ledger; `capture/verify-numbers.mjs` enforces it.
-3. **The timeline is derived, never typed.** Intent lives in seconds in `src/stations.ts`. `src/timeline.ts` is the only file that does frame arithmetic.
-
----
-
-## Commands
+## Make your own
 
 ```bash
-npm install
-npm run dev                 # Remotion Studio
-npm run lint                # tsc
-npm run verify:strict       # assets → timeline → copy (strict) → numbers
-pwsh -File ./render.ps1     # all four masters into out/
+npm install                      # Node 22+
+npm run sync:assets              # stage clips and artwork from ../archcanvas-promo-video
+npm run dev                      # Remotion Studio
+npm run verify:strict            # assets, timeline, copy, numbers
+pwsh -File ./render.ps1          # all four masters into out/
 ```
 
-Flash screening (WCAG SC 2.3.1, not a certification) is per-format — the four compositions frame the world differently. See `docs/release.md` for the ship checklist, tag, and Release upload.
+The music take and the cut bed are committed. The staged pictures in `public/` are not: clone [archcanvas-promo-video](https://github.com/ChanMeng666/archcanvas-promo-video) beside this repo for `sync:assets`. A few clips are cut from raw OBS takes that are not in either repo (`npm run cut:clips`); bring your own footage to make a new film.
 
-Requires Node 22+.
+## Licence
+
+- **Code:** MIT, see [`LICENSE`](LICENSE).
+- **Films, music, images and other media made by Chan Meng:** CC BY 4.0, see [`LICENSE-MEDIA.md`](LICENSE-MEDIA.md).
+- **Not covered:** the ArchCanvas name, logo and brand assets; the fonts (Space Grotesk and Geist Mono, under the SIL Open Font License); and the libraries, under their own licences (Remotion has its own licence).
+
+More detail: [docs/overview.md](docs/overview.md)

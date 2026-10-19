@@ -15,7 +15,7 @@
  * this tool's output is advisory and the shape-led table in analyze-music.mjs
  * is usually the one to trust for this particular film.)
  *
- * Ported from ../she-sharp-promo-video-event-lesmills-03-september-2026/tools/
+ * Ported from an earlier promo-film repo's tools/
  * find-window.mjs. Changes: the report also carries the tail level, because a
  * continuous 85-second breath has to *settle*, and a window that lands the jump
  * perfectly but ends mid-wall is useless here.

@@ -99,14 +99,14 @@ period ending 2026-12-02).
 
 ## D6. `AI architect` is treated as a fifteenth ban, above the B1–B14 card.
 
-It is not on the standing banned-claims card in `investor/founder-brief.md` §7, and it is
+It is not on the standing banned-claims card in `founder-brief.md` §7, and it is
 the only ban in this project with a fine attached: UK Architects Act 1997 s.20 (to £2,500
 per offence; ARB's Misuse of Title Policy names *"websites (including URLs and metadata)"*
 specifically) and NZ Registered Architects Act 2005 s.7 (to NZ$10,000) — **and NZ is the
 law ArchCanvas's own Terms choose.** The approved substitute is **"AI architectural
 designer"**.
 
-**The growth repo has not been updated**, which makes the approved copy bank the single
+**The positioning notes have not been updated**, which makes the approved copy bank the single
 most dangerous source in the corpus: `positioning.md`'s positioning statement,
 `messaging-library.md`'s tagline #7, all three product boilerplates and both founder bios,
 and `category.md`'s own clearance row all still contain the banned title. None of them was
@@ -229,6 +229,6 @@ rate, and nobody should reach for the words instead.
   drip-pricing exposure. Approved tagline #8 (*"Your first real floor plan, before the
   $2,000 bill."*) is cleared copy elsewhere and is deliberately unused here. The gate fails
   on `$` followed by a digit.
-- **English only.** The growth repo bans CJK outright; the gate fails on any CJK codepoint
+- **English only.** The positioning notes ban CJK outright; the gate fails on any CJK codepoint
   in script or component copy. Cheap to enforce, and the failure mode it prevents — a
   stray character surviving into a rendered master — is expensive.

@@ -16,7 +16,7 @@
  * difference between "the music answered the camera" and "the music was late".
  *
  * Ported unchanged in method from
- * ../she-sharp-promo-video-event-lesmills-03-september-2026/tools/locate-drop.mjs.
+ * an earlier promo-film repo's tools/locate-drop.mjs.
  * Only the decode was changed (pipe instead of a temp .raw file) and the
  * vocabulary ("drop" -> "lift"), because this film does not have a drop and
  * asking SUNO for one is on the Exclude list.
